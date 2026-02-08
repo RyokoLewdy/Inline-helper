@@ -1358,13 +1358,18 @@
         }
         
         function drawHexagonPattern(ctx) {
-            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
-            ctx.lineWidth = 2;
+            // Gradient hexagons
             for (let i = 0; i < 10; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 100 + 50;
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 1.5);
+                gradient.addColorStop(0, primaryColor + '99');
+                gradient.addColorStop(0.5, accentColor + '44');
+                gradient.addColorStop(1, primaryColor + '00');
+                ctx.fillStyle = gradient;
                 drawHexagon(ctx, x, y, size);
+                ctx.fill();
             }
         }
         
@@ -1821,4 +1826,5 @@
     </script>
 </body>
 </html>
+
 
