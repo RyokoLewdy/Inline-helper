@@ -1795,13 +1795,55 @@
         // Presets
         function applyPreset(preset) {
             if (preset === 'miku') {
+                // Classic Miku layout
                 primaryColor = '#39C5BB';
                 accentColor = '#FF6B9D';
                 bannerColor = '#39C5BB';
                 syncColor('primaryColor', primaryColor);
                 syncColor('accentColor', accentColor);
                 syncColor('bannerColor', bannerColor);
+                
+                boxes = [
+                    { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                ];
+                
+            } else if (preset === 'minimal') {
+                // Minimal layout - single centered box
+                boxes = [
+                    { id: 1, type: 'large', x: 1200, y: 500, size: 400, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                ];
+                
+            } else if (preset === 'grid') {
+                // Grid layout - 2x2
+                boxes = [
+                    { id: 1, type: 'large', x: 800, y: 400, size: 250, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 2, type: 'large', x: 1200, y: 400, size: 250, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 3, type: 'large', x: 800, y: 750, size: 250, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 4, type: 'large', x: 1200, y: 750, size: 250, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                ];
+                
+            } else if (preset === 'diagonal') {
+                // Diagonal layout
+                boxes = [
+                    { id: 1, type: 'large', x: 700, y: 350, size: 280, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 2, type: 'large', x: 1100, y: 550, size: 280, rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 3, type: 'large', x: 1500, y: 750, size: 280, rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                ];
+                
+            } else if (preset === 'centered') {
+                // Centered circular layout
+                boxes = [
+                    { id: 1, type: 'large', x: 1050, y: 300, size: 220, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 2, type: 'large', x: 750, y: 600, size: 220, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 3, type: 'large', x: 1350, y: 600, size: 220, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+                    { id: 4, type: 'large', x: 1050, y: 850, size: 220, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                ];
             }
+            
+            nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
+            generateBoxControls();
             redraw();
         }
         
@@ -1821,4 +1863,5 @@
     </script>
 </body>
 </html>
+
 
