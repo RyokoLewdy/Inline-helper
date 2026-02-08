@@ -541,6 +541,8 @@
         </div>
         
         <!-- General Settings -->
+            <div class="content-area">
+            <!-- General Settings -->
             <div class="category-section active" id="section-general">
                 <div class="collapsible-section">
                     <div class="collapsible-header">
@@ -551,7 +553,7 @@
                         <div class="control-group">
                             <div class="checkbox-group">
                                 <input type="checkbox" id="showTempBg" onchange="redraw()">
-                                <label class="control-label">Show Preview Background (#2e2828)</label>
+                                <label class="control-label">Show Dark Mode Preview Background</label>
                             </div>
                             <p class="info-text">Background won't appear in downloaded image</p>
                         </div>
@@ -565,6 +567,26 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>💾 Save / Load Configuration</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration</button>
+                            <p class="info-text">Downloads a .json file with all your settings</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration</button>
+                            <input type="file" id="loadConfig" accept=".json" onchange="loadConfiguration(event)">
+                            <p class="info-text">Upload a previously saved .json file</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 
                 <div class="collapsible-section">
                     <div class="collapsible-header">
@@ -1967,6 +1989,7 @@
     </script>
 </body>
 </html>
+
 
 
 
