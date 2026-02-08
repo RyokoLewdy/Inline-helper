@@ -1,5 +1,9 @@
 Basic to do list to remind me what comes next
+TO DO
 - Layout customization and presets
 - ability to move images in boxes without moving boxes
 - Zoom options for Images 
--
+- Collapse / Drop down options for the options / settings
+- add Markers to designate box numbers that dont show up when images are there.
+FIX
+-Canvas layout changing when any option is toggled
