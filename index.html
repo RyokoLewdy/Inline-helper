@@ -3,81 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Profile Design Generator</title>
+    <title>Miku's Inline Helper - Profile Design Generator</title>
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        :root {
+            --primary-teal: #39C5BB;
+            --cyan: #00D1D6;
+            --pink: #FF6B9D;
+            --light-pink: #FF8DB3;
+            --black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
         }
         
         body {
             margin: 0;
-            padding: 20px;
-            background: #1a1a1a;
+            padding: 0;
+            background: var(--black);
             font-family: 'Arial', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-teal), var(--cyan));
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0, 209, 214, 0.5);
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: 20px;
+            border-bottom: 3px solid var(--pink);
         }
         
-        .container {
-            background: #2a2a2a;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 209, 214, 0.3);
+        .header-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--pink);
+            object-fit: cover;
+            background: var(--medium-gray);
         }
         
-        #canvas {
-            border: 2px solid #39C5BB;
-            border-radius: 20px;
-            cursor: crosshair;
+        .header-content {
+            flex: 1;
         }
         
-        .controls-wrapper {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1400px;
+        .header h1 {
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+            margin: 0;
+            font-size: 32px;
         }
         
-        .control-section {
-            background: rgba(57, 197, 187, 0.05);
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid #39C5BB;
-        }
-        
-        .section-title {
-            color: #00D1D6;
-            font-size: 18px;
+        .header .subtitle {
+            color: var(--pink);
+            font-size: 14px;
+            margin-top: 5px;
             font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-            border-bottom: 2px solid #39C5BB;
-            padding-bottom: 10px;
         }
         
-        .control-group {
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 140px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--dark-gray);
+            border-right: 2px solid var(--primary-teal);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-nav li {
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .sidebar-nav button {
+            width: 100%;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            color: var(--cyan);
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-nav button:hover {
+            background: var(--medium-gray);
+            padding-left: 30px;
+            color: var(--pink);
+        }
+        
+        .sidebar-nav button.active {
+            background: var(--primary-teal);
+            color: white;
+            border-left: 4px solid var(--pink);
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .category-section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .category-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Collapsible Sections */
+        .collapsible-section {
+            background: var(--medium-gray);
+            border: 2px solid var(--primary-teal);
+            border-radius: 10px;
             margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .collapsible-header {
+            padding: 15px 20px;
+            background: var(--primary-teal);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .collapsible-header:hover {
+            background: var(--cyan);
+        }
+        
+        .collapsible-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .collapsible-icon {
+            color: var(--pink);
+            transition: transform 0.3s;
+            font-size: 20px;
+        }
+        
+        .collapsible-section.collapsed .collapsible-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .collapsible-content {
+            padding: 20px;
+            display: block;
+        }
+        
+        .collapsible-section.collapsed .collapsible-content {
+            display: none;
+        }
+        
+        /* Controls */
+        .control-group {
+            margin-bottom: 20px;
         }
         
         .control-label {
-            color: #39C5BB;
+            color: var(--cyan);
             font-size: 13px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
         
         input[type="text"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 8px 12px;
-            background: #2a2a2a;
-            border: 2px solid #39C5BB;
-            border-radius: 10px;
+            padding: 10px;
+            background: var(--dark-gray);
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
             color: white;
             font-size: 14px;
         }
@@ -86,21 +226,26 @@
         input[type="number"]:focus,
         select:focus {
             outline: none;
-            border-color: #00D1D6;
-            box-shadow: 0 0 10px rgba(0, 209, 214, 0.3);
+            border-color: var(--pink);
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
         }
         
         input[type="range"] {
-            width: 100%;
+            flex: 1;
             cursor: pointer;
-            accent-color: #39C5BB;
+            accent-color: var(--primary-teal);
+        }
+        
+        input[type="number"].range-value {
+            width: 80px;
+            padding: 8px;
         }
         
         input[type="checkbox"] {
             width: 20px;
             height: 20px;
             cursor: pointer;
-            accent-color: #39C5BB;
+            accent-color: var(--primary-teal);
         }
         
         .checkbox-group {
@@ -118,8 +263,8 @@
         .color-picker {
             width: 50px;
             height: 50px;
-            border: 2px solid #39C5BB;
-            border-radius: 10px;
+            border: 2px solid var(--pink);
+            border-radius: 8px;
             cursor: pointer;
         }
         
@@ -128,9 +273,9 @@
         }
         
         button {
-            background: linear-gradient(135deg, #39C5BB, #00D1D6);
+            background: linear-gradient(135deg, var(--primary-teal), var(--cyan));
             color: white;
-            border: none;
+            border: 2px solid var(--pink);
             padding: 12px 24px;
             border-radius: 25px;
             cursor: pointer;
@@ -138,33 +283,128 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            width: 100%;
         }
         
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(57, 197, 187, 0.5);
+            border-color: var(--pink);
         }
         
-        .upload-btn {
-            background: linear-gradient(135deg, #FF6B9D, #FF8DB3);
+        button.secondary {
+            background: linear-gradient(135deg, var(--pink), var(--light-pink));
         }
         
-        input[type="file"] {
+        button.danger {
+            background: #DC143C;
+        }
+        
+        /* Canvas Container */
+        .canvas-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--medium-gray);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-teal);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        #canvas {
+            border: 2px solid var(--pink);
+            border-radius: 10px;
+            max-width: 400px;
+            height: auto;
+            display: block;
+        }
+        
+        .canvas-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .canvas-controls button {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        
+        /* Preview Modal */
+        .preview-modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-modal.active {
+            display: flex;
+        }
+        
+        .preview-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        
+        .preview-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--primary-teal);
+            border: 2px solid var(--pink);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-close:hover {
+            background: var(--pink);
+        }
+        
+        .preview-canvas {
+            border: 3px solid var(--pink);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+        }
+        
+        /* Image Upload Areas */
+        .upload-area {
+            background: var(--dark-gray);
+            border: 2px dashed var(--primary-teal);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
         }
         
         .preview-box {
             width: 100%;
             height: 150px;
-            border: 2px dashed #39C5BB;
-            border-radius: 15px;
+            border: 2px dashed var(--pink);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: rgba(0,0,0,0.3);
+            background: var(--black);
             margin-bottom: 10px;
+            position: relative;
         }
         
         .preview-box img {
@@ -173,376 +413,525 @@
             object-fit: contain;
         }
         
-        .value-display {
-            color: #FF6B9D;
-            font-size: 12px;
+        .box-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
             font-weight: bold;
-            text-align: right;
-            margin-top: 5px;
+            color: var(--cyan);
+            opacity: 0.3;
+            pointer-events: none;
         }
         
-        h1 {
-            color: #00D1D6;
-            text-align: center;
-            text-shadow: 0 0 20px rgba(0, 209, 214, 0.5);
-            margin: 0;
+        input[type="file"] {
+            display: none;
         }
         
-        .info {
-            color: #FF6B9D;
-            text-align: center;
-            font-size: 14px;
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         
-        .main-controls {
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        /* Action Bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 300px;
+            right: 0;
+            background: var(--dark-gray);
+            border-top: 2px solid var(--primary-teal);
+            padding: 15px 20px;
             display: flex;
             gap: 15px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            z-index: 99;
         }
         
-        .main-controls button {
-            width: auto;
-            min-width: 200px;
+        /* Preset Pills */
+        .preset-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-pill {
+            padding: 8px 16px;
+            background: var(--dark-gray);
+            border: 2px solid var(--pink);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            color: var(--cyan);
+        }
+        
+        .preset-pill:hover {
+            background: var(--primary-teal);
+            transform: scale(1.05);
+            color: white;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-teal);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan);
+        }
+        
+        .info-text {
+            color: var(--pink);
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>🎨 Universal Profile Design Generator 🎨</h1>
-    <p class="info">1920x1080 | Fully Customizable | Download as PNG</p>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-image">🎤</div>
+        <div class="header-content">
+            <h1>🎤 Miku's Inline Helper</h1>
+            <p class="subtitle">Virtual Idol Profile Generator | 1920x1080 | Fully Customizable</p>
+        </div>
+    </div>
     
-    <div class="controls-wrapper">
-        <!-- Text Settings -->
-        <div class="control-section">
-            <div class="section-title">📝 Text Settings</div>
-            
-            <div class="control-group">
-                <label class="control-label">Main Text</label>
-                <input type="text" id="mainText" value="Miku" oninput="redraw()">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Subtitle Text</label>
-                <input type="text" id="subtitleText" value="Hatsune" oninput="redraw()">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Main Font</label>
-                <select id="mainFont" onchange="redraw()">
-                    <option value="Comic Sans MS">Comic Sans MS (Default)</option>
-                    <option value="Impact">Impact</option>
-                    <option value="Arial Black">Arial Black</option>
-                    <option value="Brush Script MT">Brush Script MT</option>
-                    <option value="Courier New">Courier New</option>
-                    <option value="Georgia">Georgia</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                    <option value="Trebuchet MS">Trebuchet MS</option>
-                    <option value="Verdana">Verdana</option>
-                    <option value="Marker Felt">Marker Felt</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Subtitle Font</label>
-                <select id="subtitleFont" onchange="redraw()">
-                    <option value="Trebuchet MS">Trebuchet MS (Default)</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Helvetica">Helvetica</option>
-                    <option value="Impact">Impact</option>
-                    <option value="Georgia">Georgia</option>
-                    <option value="Courier New">Courier New</option>
-                    <option value="Verdana">Verdana</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Main Text Size: <span id="mainSizeValue">85px</span></label>
-                <input type="range" id="mainTextSize" min="40" max="150" value="85" oninput="updateValue('mainSize', this.value); redraw()">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Subtitle Size: <span id="subtitleSizeValue">38px</span></label>
-                <input type="range" id="subtitleTextSize" min="20" max="80" value="38" oninput="updateValue('subtitleSize', this.value); redraw()">
-            </div>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <ul class="sidebar-nav">
+                <li><button class="nav-btn active" data-category="general">⚙️ General Settings</button></li>
+                <li><button class="nav-btn" data-category="text">📝 Text & Banner</button></li>
+                <li><button class="nav-btn" data-category="colors">🎨 Colors</button></li>
+                <li><button class="nav-btn" data-category="background">🌟 Background</button></li>
+                <li><button class="nav-btn" data-category="images">📸 Images & Boxes</button></li>
+                <li><button class="nav-btn" data-category="layout">📐 Layout & Presets</button></li>
+                <li><button class="nav-btn" data-category="advanced">🔧 Advanced</button></li>
+            </ul>
         </div>
         
-        <!-- Banner Settings -->
-        <div class="control-section">
-            <div class="section-title">🏷️ Banner Settings</div>
-            
-            <div class="control-group">
-                <label class="control-label">Banner Shape</label>
-                <select id="bannerShape" onchange="redraw()">
-                    <option value="rounded">Rounded Rectangle (Default)</option>
-                    <option value="rectangle">Sharp Rectangle</option>
-                    <option value="hexagon">Hexagon</option>
-                    <option value="ellipse">Ellipse</option>
-                    <option value="diamond">Diamond</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Banner Width: <span id="bannerWidthValue">780px</span></label>
-                <input type="range" id="bannerWidth" min="400" max="1200" value="780" oninput="updateValue('bannerWidth', this.value); redraw()">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Banner Height: <span id="bannerHeightValue">140px</span></label>
-                <input type="range" id="bannerHeight" min="80" max="250" value="140" oninput="updateValue('bannerHeight', this.value); redraw()">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Banner Color</label>
-                <div class="color-input-group">
-                    <input type="color" id="bannerColorPicker" value="#39C5BB" class="color-picker" oninput="syncColor('bannerColor', this.value)">
-                    <input type="text" id="bannerColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('bannerColor', this.value)" placeholder="#39C5BB">
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- General Settings -->
+            <div class="category-section active" id="section-general">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🖼️ Canvas Settings</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showTempBg" onchange="redraw()">
+                                <label class="control-label">Show Preview Background (#2e2828)</label>
+                            </div>
+                            <p class="info-text">Background won't appear in downloaded image</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showBoxMarkers" checked onchange="redraw()">
+                                <label class="control-label">Show Box Number Markers</label>
+                            </div>
+                            <p class="info-text">Markers disappear when images are uploaded</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>💾 Save / Load Configuration</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration</button>
+                            <p class="info-text">Downloads a .json file with all your settings</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration</button>
+                            <input type="file" id="loadConfig" accept=".json" onchange="loadConfiguration(event)">
+                            <p class="info-text">Upload a previously saved .json file</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="control-group">
-                <label class="control-label">Banner Rotation: <span id="bannerRotValue">-3°</span></label>
-                <input type="range" id="bannerRotation" min="-45" max="45" value="-3" oninput="updateValue('bannerRot', this.value); redraw()">
-            </div>
-            
-            <div class="control-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="showSparkles" checked onchange="redraw()">
-                    <label class="control-label">Show Sparkles</label>
+            <!-- Text & Banner -->
+            <div class="category-section" id="section-text">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>📝 Text Content</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <label class="control-label">Main Text</label>
+                            <input type="text" id="mainText" value="Miku" oninput="redraw()">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Subtitle Text</label>
+                            <input type="text" id="subtitleText" value="Hatsune" oninput="redraw()">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Main Font</label>
+                            <select id="mainFont" onchange="redraw()">
+                                <option value="Comic Sans MS">Comic Sans MS (Default)</option>
+                                <option value="Impact">Impact</option>
+                                <option value="Arial Black">Arial Black</option>
+                                <option value="Brush Script MT">Brush Script MT</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Trebuchet MS">Trebuchet MS</option>
+                                <option value="Verdana">Verdana</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Subtitle Font</label>
+                            <select id="subtitleFont" onchange="redraw()">
+                                <option value="Trebuchet MS">Trebuchet MS (Default)</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Impact">Impact</option>
+                                <option value="Georgia">Georgia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Main Text Size</label>
+                            <div class="control-row">
+                                <input type="range" id="mainTextSize" min="40" max="150" value="85" oninput="syncSlider('mainTextSize', this.value)">
+                                <input type="number" class="range-value" id="mainTextSizeValue" min="40" max="150" value="85" oninput="syncNumber('mainTextSize', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Subtitle Size</label>
+                            <div class="control-row">
+                                <input type="range" id="subtitleTextSize" min="20" max="80" value="38" oninput="syncSlider('subtitleTextSize', this.value)">
+                                <input type="number" class="range-value" id="subtitleTextSizeValue" min="20" max="80" value="38" oninput="syncNumber('subtitleTextSize', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🏷️ Banner Settings</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <label class="control-label">Banner Shape</label>
+                            <select id="bannerShape" onchange="redraw()">
+                                <option value="rounded">Rounded Rectangle (Default)</option>
+                                <option value="rectangle">Sharp Rectangle</option>
+                                <option value="hexagon">Hexagon</option>
+                                <option value="ellipse">Ellipse</option>
+                                <option value="diamond">Diamond</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner X Position</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerX" min="500" max="1600" value="1050" oninput="syncSlider('bannerX', this.value)">
+                                <input type="number" class="range-value" id="bannerXValue" min="500" max="1600" value="1050" oninput="syncNumber('bannerX', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Y Position</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerY" min="400" max="1000" value="800" oninput="syncSlider('bannerY', this.value)">
+                                <input type="number" class="range-value" id="bannerYValue" min="400" max="1000" value="800" oninput="syncNumber('bannerY', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Width</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerWidth" min="400" max="1200" value="780" oninput="syncSlider('bannerWidth', this.value)">
+                                <input type="number" class="range-value" id="bannerWidthValue" min="400" max="1200" value="780" oninput="syncNumber('bannerWidth', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Height</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerHeight" min="80" max="250" value="140" oninput="syncSlider('bannerHeight', this.value)">
+                                <input type="number" class="range-value" id="bannerHeightValue" min="80" max="250" value="140" oninput="syncNumber('bannerHeight', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Rotation (degrees)</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerRotation" min="-45" max="45" value="-3" oninput="syncSlider('bannerRotation', this.value)">
+                                <input type="number" class="range-value" id="bannerRotationValue" min="-45" max="45" value="-3" oninput="syncNumber('bannerRotation', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showSparkles" checked onchange="redraw()">
+                                <label class="control-label">Show Sparkles</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Background Elements -->
-        <div class="control-section">
-            <div class="section-title">🌟 Background Elements</div>
             
-            <div class="control-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="showDigitalCode" checked onchange="redraw()">
-                    <label class="control-label">Show Digital Code</label>
+            <!-- Colors -->
+            <div class="category-section" id="section-colors">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🎨 Main Colors</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <label class="control-label">Primary Color (Teal)</label>
+                            <div class="color-input-group">
+                                <input type="color" id="primaryColorPicker" value="#39C5BB" class="color-picker" oninput="syncColor('primaryColor', this.value)">
+                                <input type="text" id="primaryColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('primaryColor', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Accent Color (Pink)</label>
+                            <div class="color-input-group">
+                                <input type="color" id="accentColorPicker" value="#FF6B9D" class="color-picker" oninput="syncColor('accentColor', this.value)">
+                                <input type="text" id="accentColorHex" value="#FF6B9D" class="hex-input" oninput="syncColorFromHex('accentColor', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="bannerColorPicker" value="#39C5BB" class="color-picker" oninput="syncColor('bannerColor', this.value)">
+                                <input type="text" id="bannerColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('bannerColor', this.value)">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="control-group">
-                <label class="control-label">Digital Code Text</label>
-                <input type="text" id="digitalCodeText" value="01" maxlength="30" oninput="redraw()">
-            </div>
-            
-            <div class="control-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="showMusicNotes" checked onchange="redraw()">
-                    <label class="control-label">Show Music Notes</label>
+            <!-- Background -->
+            <div class="category-section" id="section-background">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🌟 Background Elements</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <label class="control-label">Background Shape Type</label>
+                            <select id="bgShapeType" onchange="redraw()">
+                                <option value="circles">Gradient Circles (Default)</option>
+                                <option value="hexagons">Hexagons</option>
+                                <option value="stars">Stars</option>
+                                <option value="diamonds">Diamonds</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showDigitalCode" checked onchange="redraw()">
+                                <label class="control-label">Show Digital Code</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Digital Code Text</label>
+                            <input type="text" id="digitalCodeText" value="01" maxlength="3" oninput="redraw()">
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showMusicNotes" checked onchange="redraw()">
+                                <label class="control-label">Show Decorative Symbols</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Symbol Type</label>
+                            <select id="musicNoteSymbol" onchange="redraw()">
+                                <option value="♪">♪ (Music Note)</option>
+                                <option value="♫">♫ (Double Note)</option>
+                                <option value="♬">♬ (Beamed Notes)</option>
+                                <option value="★">★ (Star)</option>
+                                <option value="♥">♥ (Heart)</option>
+                                <option value="✦">✦ (Sparkle)</option>
+                                <option value="◆">◆ (Diamond)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="control-group">
-                <label class="control-label">Music Note Symbol</label>
-                <select id="musicNoteSymbol" onchange="redraw()">
-                    <option value="♪">♪ (Single)</option>
-                    <option value="♫">♫ (Double)</option>
-                    <option value="♬">♬ (Beamed)</option>
-                    <option value="★">★ (Star)</option>
-                    <option value="♥">♥ (Heart)</option>
-                    <option value="✦">✦ (Sparkle)</option>
-                    <option value="◆">◆ (Diamond)</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="showTempBg" onchange="redraw()">
-                    <label class="control-label">Show Temp Background (Preview Only)</label>
+            <!-- Images & Boxes -->
+            <div class="category-section" id="section-images">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🎵 Main Cutout Image</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="upload-area">
+                            <div class="preview-box" id="preview-cutout">
+                                <span class="box-marker" id="marker-cutout">C</span>
+                            </div>
+                            <button class="secondary" onclick="document.getElementById('cutout').click()">📤 Upload Image</button>
+                            <input type="file" id="cutout" accept="image/*" onchange="handleImageUpload(event, 'cutout', 0)">
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="control-group">
+                                <label class="control-label">Opacity (%)</label>
+                                <div class="control-row">
+                                    <input type="range" id="opacity-cutout" min="0" max="100" value="100" oninput="syncSlider('opacity-cutout', this.value)">
+                                    <input type="number" class="range-value" id="opacity-cutoutValue" min="0" max="100" value="100" oninput="syncNumber('opacity-cutout', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Zoom (%)</label>
+                                <div class="control-row">
+                                    <input type="range" id="zoom-cutout" min="50" max="200" value="100" oninput="syncSlider('zoom-cutout', this.value)">
+                                    <input type="number" class="range-value" id="zoom-cutoutValue" min="50" max="200" value="100" oninput="syncNumber('zoom-cutout', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Offset X</label>
+                                <div class="control-row">
+                                    <input type="range" id="offsetX-cutout" min="-200" max="200" value="0" oninput="syncSlider('offsetX-cutout', this.value)">
+                                    <input type="number" class="range-value" id="offsetX-cutoutValue" min="-200" max="200" value="0" oninput="syncNumber('offsetX-cutout', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Offset Y</label>
+                                <div class="control-row">
+                                    <input type="range" id="offsetY-cutout" min="-200" max="200" value="0" oninput="syncSlider('offsetY-cutout', this.value)">
+                                    <input type="number" class="range-value" id="offsetY-cutoutValue" min="-200" max="200" value="0" oninput="syncNumber('offsetY-cutout', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="dynamicBoxesContainer">
+                    <!-- Dynamic boxes will be generated here -->
+                </div>
+                
+                <div class="control-group">
+                    <button onclick="addNewBox()" class="secondary" style="width: 100%;">➕ Add New Image Box</button>
                 </div>
             </div>
-        </div>
-        
-        <!-- Colors -->
-        <div class="control-section">
-            <div class="section-title">🎨 Color Scheme</div>
             
-            <div class="control-group">
-                <label class="control-label">Primary Color</label>
-                <div class="color-input-group">
-                    <input type="color" id="primaryColorPicker" value="#39C5BB" class="color-picker" oninput="syncColor('primaryColor', this.value)">
-                    <input type="text" id="primaryColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('primaryColor', this.value)" placeholder="#39C5BB">
+            <!-- Layout & Presets -->
+            <div class="category-section" id="section-layout">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>📐 Layout Presets</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="preset-pills">
+                            <div class="preset-pill" onclick="applyPreset('miku')">🎤 Miku Style</div>
+                            <div class="preset-pill" onclick="applyPreset('minimal')">📱 Minimal</div>
+                            <div class="preset-pill" onclick="applyPreset('grid')">📊 Grid Layout</div>
+                            <div class="preset-pill" onclick="applyPreset('diagonal')">📐 Diagonal</div>
+                            <div class="preset-pill" onclick="applyPreset('centered')">🎯 Centered</div>
+                        </div>
+                        <p class="info-text">Click a preset to instantly apply a layout style</p>
+                    </div>
                 </div>
             </div>
             
-            <div class="control-group">
-                <label class="control-label">Accent Color</label>
-                <div class="color-input-group">
-                    <input type="color" id="accentColorPicker" value="#FF6B9D" class="color-picker" oninput="syncColor('accentColor', this.value)">
-                    <input type="text" id="accentColorHex" value="#FF6B9D" class="hex-input" oninput="syncColorFromHex('accentColor', this.value)" placeholder="#FF6B9D">
+            <!-- Advanced -->
+            <div class="category-section" id="section-advanced">
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🔧 Advanced Options</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <button onclick="resetToDefaults()" class="danger" style="width: 100%;">🔄 Reset All to Defaults</button>
+                            <p class="info-text">This will reset all settings but keep your uploaded images</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <button onclick="clearAllImages()" class="danger" style="width: 100%;">🗑️ Clear All Images</button>
+                            <p class="info-text">Removes all uploaded images</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Image Upload Sections -->
-    <div class="controls-wrapper">
-        <!-- Main Cutout -->
-        <div class="control-section">
-            <div class="section-title">🎵 Main Cutout Image</div>
-            <div class="preview-box" id="preview-cutout"></div>
-            <button class="upload-btn" onclick="document.getElementById('cutout').click()">Upload Image</button>
-            <input type="file" id="cutout" accept="image/*" onchange="handleImageUpload(event, 'cutout', 0)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Opacity: <span id="value-cutout-op">100%</span></label>
-                <input type="range" id="opacity-cutout" min="0" max="100" value="100" oninput="updateOpacity('cutout', 0, this.value)">
-            </div>
-        </div>
-        
-        <!-- Large Diamonds -->
-        <div class="control-section">
-            <div class="section-title">📸 Large Diamond 1</div>
-            <div class="preview-box" id="preview-large-1"></div>
-            <button class="upload-btn" onclick="document.getElementById('large-1').click()">Upload Image</button>
-            <input type="file" id="large-1" accept="image/*" onchange="handleImageUpload(event, 'large', 0)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-large-1-size">330px</span></label>
-                <input type="range" id="size-large-1" min="150" max="500" value="330" oninput="updateDiamondSize('large', 0, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-large-1-rot">45°</span></label>
-                <input type="range" id="rotation-large-1" min="-180" max="180" value="45" oninput="updateDiamondRotation('large', 0, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-large-1-op">100%</span></label>
-                <input type="range" id="opacity-large-1" min="0" max="100" value="100" oninput="updateOpacity('large', 0, this.value)">
-            </div>
-        </div>
-        
-        <div class="control-section">
-            <div class="section-title">📸 Large Diamond 2</div>
-            <div class="preview-box" id="preview-large-2"></div>
-            <button class="upload-btn" onclick="document.getElementById('large-2').click()">Upload Image</button>
-            <input type="file" id="large-2" accept="image/*" onchange="handleImageUpload(event, 'large', 1)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-large-2-size">300px</span></label>
-                <input type="range" id="size-large-2" min="150" max="500" value="300" oninput="updateDiamondSize('large', 1, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-large-2-rot">15°</span></label>
-                <input type="range" id="rotation-large-2" min="-180" max="180" value="15" oninput="updateDiamondRotation('large', 1, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-large-2-op">100%</span></label>
-                <input type="range" id="opacity-large-2" min="0" max="100" value="100" oninput="updateOpacity('large', 1, this.value)">
-            </div>
-        </div>
-        
-        <div class="control-section">
-            <div class="section-title">📸 Large Diamond 3</div>
-            <div class="preview-box" id="preview-large-3"></div>
-            <button class="upload-btn" onclick="document.getElementById('large-3').click()">Upload Image</button>
-            <input type="file" id="large-3" accept="image/*" onchange="handleImageUpload(event, 'large', 2)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-large-3-size">280px</span></label>
-                <input type="range" id="size-large-3" min="150" max="500" value="280" oninput="updateDiamondSize('large', 2, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-large-3-rot">-20°</span></label>
-                <input type="range" id="rotation-large-3" min="-180" max="180" value="-20" oninput="updateDiamondRotation('large', 2, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-large-3-op">100%</span></label>
-                <input type="range" id="opacity-large-3" min="0" max="100" value="100" oninput="updateOpacity('large', 2, this.value)">
-            </div>
-        </div>
-        
-        <!-- Small Diamonds -->
-        <div class="control-section">
-            <div class="section-title">📸 Small Diamond 1</div>
-            <div class="preview-box" id="preview-small-1"></div>
-            <button class="upload-btn" onclick="document.getElementById('small-1').click()">Upload Image</button>
-            <input type="file" id="small-1" accept="image/*" onchange="handleImageUpload(event, 'small', 0)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-small-1-size">80px</span></label>
-                <input type="range" id="size-small-1" min="50" max="150" value="80" oninput="updateDiamondSize('small', 0, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-small-1-rot">45°</span></label>
-                <input type="range" id="rotation-small-1" min="-180" max="180" value="45" oninput="updateDiamondRotation('small', 0, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-small-1-op">100%</span></label>
-                <input type="range" id="opacity-small-1" min="0" max="100" value="100" oninput="updateOpacity('small', 0, this.value)">
-            </div>
-        </div>
-        
-        <div class="control-section">
-            <div class="section-title">📸 Small Diamond 2</div>
-            <div class="preview-box" id="preview-small-2"></div>
-            <button class="upload-btn" onclick="document.getElementById('small-2').click()">Upload Image</button>
-            <input type="file" id="small-2" accept="image/*" onchange="handleImageUpload(event, 'small', 1)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-small-2-size">80px</span></label>
-                <input type="range" id="size-small-2" min="50" max="150" value="80" oninput="updateDiamondSize('small', 1, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-small-2-rot">45°</span></label>
-                <input type="range" id="rotation-small-2" min="-180" max="180" value="45" oninput="updateDiamondRotation('small', 1, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-small-2-op">100%</span></label>
-                <input type="range" id="opacity-small-2" min="0" max="100" value="100" oninput="updateOpacity('small', 1, this.value)">
-            </div>
-        </div>
-        
-        <div class="control-section">
-            <div class="section-title">📸 Small Diamond 3</div>
-            <div class="preview-box" id="preview-small-3"></div>
-            <button class="upload-btn" onclick="document.getElementById('small-3').click()">Upload Image</button>
-            <input type="file" id="small-3" accept="image/*" onchange="handleImageUpload(event, 'small', 2)">
-            
-            <div class="control-group" style="margin-top: 15px;">
-                <label class="control-label">Size: <span id="value-small-3-size">80px</span></label>
-                <input type="range" id="size-small-3" min="50" max="150" value="80" oninput="updateDiamondSize('small', 2, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Rotation: <span id="value-small-3-rot">45°</span></label>
-                <input type="range" id="rotation-small-3" min="-180" max="180" value="45" oninput="updateDiamondRotation('small', 2, this.value)">
-            </div>
-            
-            <div class="control-group">
-                <label class="control-label">Opacity: <span id="value-small-3-op">100%</span></label>
-                <input type="range" id="opacity-small-3" min="0" max="100" value="100" oninput="updateOpacity('small', 2, this.value)">
-            </div>
+    <!-- Mini Canvas Preview -->
+    <div class="canvas-container">
+        <canvas id="canvas" width="400" height="225"></canvas>
+        <div class="canvas-controls">
+            <button onclick="openPreview()">👁️ Preview</button>
+            <button onclick="downloadImage()">💾 Download</button>
         </div>
     </div>
     
-    <div class="container">
-        <canvas id="canvas" width="2100" height="1200"></canvas>
-    </div>
-    
-    <div class="main-controls">
-        <button onclick="resetToDefaults()">🔄 Reset to Defaults</button>
-        <button onclick="redraw()">🎨 Redraw Canvas</button>
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <button onclick="openPreview()">👁️ Full Preview</button>
+        <button onclick="redraw()">🎨 Refresh Canvas</button>
         <button onclick="downloadImage()">💾 Download PNG (1920x1080)</button>
     </div>
     
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <button class="preview-close" onclick="closePreview()">✕</button>
+            <canvas class="preview-canvas" id="previewCanvas" width="1920" height="1080"></canvas>
+        </div>
+    </div>
+    
     <script>
+        // Global variables
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCtx = previewCanvas.getContext('2d');
         
         const SAFE_ZONE = {
             x: 90,
@@ -555,19 +944,133 @@
         let accentColor = '#FF6B9D';
         let bannerColor = '#39C5BB';
         
-        let largeImages = [null, null, null];
-        let smallImages = [null, null, null];
         let mikuCutout = null;
-        
-        let largeOpacity = [100, 100, 100];
-        let smallOpacity = [100, 100, 100];
         let cutoutOpacity = 100;
+        let cutoutZoom = 100;
+        let cutoutOffsetX = 0;
+        let cutoutOffsetY = 0;
         
-        let largeSizes = [330, 300, 280];
-        let smallSizes = [80, 80, 80];
-        let largeRotations = [45, 15, -20];
-        let smallRotations = [45, 45, 45];
+        let boxes = [
+            { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+            { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
+            { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+        ];
         
+        let nextBoxId = 4;
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeSidebar();
+            initializeCollapsibles();
+            generateBoxControls();
+            redraw();
+        });
+        
+        // Sidebar navigation - FIXED
+        function initializeSidebar() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.category-section');
+            
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.dataset.category;
+                    
+                    // Remove active class from all buttons
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Hide all sections
+                    sections.forEach(s => s.classList.remove('active'));
+                    
+                    // Show selected section
+                    const targetSection = document.getElementById(`section-${category}`);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        // Collapsible sections - FIXED
+        function initializeCollapsibles() {
+            document.querySelectorAll('.collapsible-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.parentElement.classList.toggle('collapsed');
+                });
+            });
+        }
+        
+        // Sync slider and number input
+        function syncSlider(id, value) {
+            const slider = document.getElementById(id);
+            const numberInput = document.getElementById(id + 'Value');
+            
+            if (slider) slider.value = value;
+            if (numberInput) numberInput.value = value;
+            
+            // Update specific values
+            if (id.includes('opacity')) {
+                const parts = id.split('-');
+                if (parts[1] === 'cutout') {
+                    cutoutOpacity = parseInt(value);
+                } else {
+                    const boxId = parseInt(parts[1]);
+                    const box = boxes.find(b => b.id === boxId);
+                    if (box) box.opacity = parseInt(value);
+                }
+            } else if (id.includes('zoom')) {
+                const parts = id.split('-');
+                if (parts[1] === 'cutout') {
+                    cutoutZoom = parseInt(value);
+                } else {
+                    const boxId = parseInt(parts[1]);
+                    const box = boxes.find(b => b.id === boxId);
+                    if (box) box.zoom = parseInt(value);
+                }
+            } else if (id.includes('offsetX')) {
+                const parts = id.split('-');
+                if (parts[1] === 'cutout') {
+                    cutoutOffsetX = parseInt(value);
+                } else {
+                    const boxId = parseInt(parts[1]);
+                    const box = boxes.find(b => b.id === boxId);
+                    if (box) box.offsetX = parseInt(value);
+                }
+            } else if (id.includes('offsetY')) {
+                const parts = id.split('-');
+                if (parts[1] === 'cutout') {
+                    cutoutOffsetY = parseInt(value);
+                } else {
+                    const boxId = parseInt(parts[1]);
+                    const box = boxes.find(b => b.id === boxId);
+                    if (box) box.offsetY = parseInt(value);
+                }
+            } else if (id.includes('size-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.size = parseInt(value);
+            } else if (id.includes('rotation-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.rotation = parseInt(value);
+            } else if (id.includes('posX-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.x = parseInt(value);
+            } else if (id.includes('posY-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.y = parseInt(value);
+            }
+            
+            redraw();
+        }
+        
+        function syncNumber(id, value) {
+            syncSlider(id, value);
+        }
+        
+        // Color sync
         function syncColor(type, value) {
             if (type === 'primaryColor') {
                 primaryColor = value;
@@ -590,53 +1093,136 @@
             syncColor(type, value);
         }
         
-        function updateValue(id, value) {
-            const suffixes = {
-                'mainSize': 'px',
-                'subtitleSize': 'px',
-                'bannerWidth': 'px',
-                'bannerHeight': 'px',
-                'bannerRot': '°'
+        // Generate box controls dynamically
+        function generateBoxControls() {
+            const container = document.getElementById('dynamicBoxesContainer');
+            container.innerHTML = '';
+            
+            boxes.forEach((box, index) => {
+                const section = document.createElement('div');
+                section.className = 'collapsible-section';
+                section.innerHTML = `
+                    <div class="collapsible-header">
+                        <h3>📸 Image Box ${box.id}</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="upload-area">
+                            <div class="preview-box" id="preview-${box.id}">
+                                <span class="box-marker" id="marker-${box.id}">${box.id}</span>
+                            </div>
+                            <button class="secondary" onclick="document.getElementById('upload-${box.id}').click()">📤 Upload Image</button>
+                            <input type="file" id="upload-${box.id}" accept="image/*" onchange="handleBoxImageUpload(event, ${box.id})">
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="control-group">
+                                <label class="control-label">Position X</label>
+                                <div class="control-row">
+                                    <input type="range" id="posX-${box.id}" min="200" max="1900" value="${box.x}" oninput="syncSlider('posX-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="posX-${box.id}Value" min="200" max="1900" value="${box.x}" oninput="syncNumber('posX-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Position Y</label>
+                                <div class="control-row">
+                                    <input type="range" id="posY-${box.id}" min="200" max="1000" value="${box.y}" oninput="syncSlider('posY-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="posY-${box.id}Value" min="200" max="1000" value="${box.y}" oninput="syncNumber('posY-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Size</label>
+                                <div class="control-row">
+                                    <input type="range" id="size-${box.id}" min="100" max="500" value="${box.size}" oninput="syncSlider('size-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="size-${box.id}Value" min="100" max="500" value="${box.size}" oninput="syncNumber('size-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Rotation (degrees)</label>
+                                <div class="control-row">
+                                    <input type="range" id="rotation-${box.id}" min="-180" max="180" value="${box.rotation}" oninput="syncSlider('rotation-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="rotation-${box.id}Value" min="-180" max="180" value="${box.rotation}" oninput="syncNumber('rotation-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Opacity (%)</label>
+                                <div class="control-row">
+                                    <input type="range" id="opacity-${box.id}" min="0" max="100" value="${box.opacity}" oninput="syncSlider('opacity-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="opacity-${box.id}Value" min="0" max="100" value="${box.opacity}" oninput="syncNumber('opacity-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Zoom (%)</label>
+                                <div class="control-row">
+                                    <input type="range" id="zoom-${box.id}" min="50" max="200" value="${box.zoom}" oninput="syncSlider('zoom-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="zoom-${box.id}Value" min="50" max="200" value="${box.zoom}" oninput="syncNumber('zoom-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Offset X</label>
+                                <div class="control-row">
+                                    <input type="range" id="offsetX-${box.id}" min="-200" max="200" value="${box.offsetX}" oninput="syncSlider('offsetX-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="offsetX-${box.id}Value" min="-200" max="200" value="${box.offsetX}" oninput="syncNumber('offsetX-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Offset Y</label>
+                                <div class="control-row">
+                                    <input type="range" id="offsetY-${box.id}" min="-200" max="200" value="${box.offsetY}" oninput="syncSlider('offsetY-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="offsetY-${box.id}Value" min="-200" max="200" value="${box.offsetY}" oninput="syncNumber('offsetY-${box.id}', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="danger" onclick="deleteBox(${box.id})" style="width: 100%; margin-top: 15px;">🗑️ Delete This Box</button>
+                    </div>
+                `;
+                container.appendChild(section);
+                
+                // Re-initialize collapsible for this section
+                const header = section.querySelector('.collapsible-header');
+                header.addEventListener('click', () => {
+                    section.classList.toggle('collapsed');
+                });
+            });
+        }
+        
+        // Add new box
+        function addNewBox() {
+            const newBox = {
+                id: nextBoxId++,
+                type: 'custom',
+                x: 1000,
+                y: 500,
+                size: 250,
+                rotation: 0,
+                image: null,
+                opacity: 100,
+                zoom: 100,
+                offsetX: 0,
+                offsetY: 0
             };
-            document.getElementById(id + 'Value').textContent = value + suffixes[id];
-        }
-        
-        function updateOpacity(type, index, value) {
-            if (type === 'cutout') {
-                cutoutOpacity = parseInt(value);
-                document.getElementById('value-cutout-op').textContent = value + '%';
-            } else if (type === 'large') {
-                largeOpacity[index] = parseInt(value);
-                document.getElementById(`value-large-${index + 1}-op`).textContent = value + '%';
-            } else if (type === 'small') {
-                smallOpacity[index] = parseInt(value);
-                document.getElementById(`value-small-${index + 1}-op`).textContent = value + '%';
-            }
+            boxes.push(newBox);
+            generateBoxControls();
             redraw();
         }
         
-        function updateDiamondSize(type, index, value) {
-            if (type === 'large') {
-                largeSizes[index] = parseInt(value);
-                document.getElementById(`value-large-${index + 1}-size`).textContent = value + 'px';
-            } else if (type === 'small') {
-                smallSizes[index] = parseInt(value);
-                document.getElementById(`value-small-${index + 1}-size`).textContent = value + 'px';
-            }
+        // Delete box
+        function deleteBox(id) {
+            if (!confirm('Delete this image box?')) return;
+            boxes = boxes.filter(b => b.id !== id);
+            generateBoxControls();
             redraw();
         }
         
-        function updateDiamondRotation(type, index, value) {
-            if (type === 'large') {
-                largeRotations[index] = parseInt(value);
-                document.getElementById(`value-large-${index + 1}-rot`).textContent = value + '°';
-            } else if (type === 'small') {
-                smallRotations[index] = parseInt(value);
-                document.getElementById(`value-small-${index + 1}-rot`).textContent = value + '°';
-            }
-            redraw();
-        }
-        
+        // Image uploads
         function handleImageUpload(event, type, index) {
             const file = event.target.files[0];
             if (!file) return;
@@ -645,16 +1231,9 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    if (type === 'large') {
-                        largeImages[index] = img;
-                        document.getElementById(`preview-large-${index + 1}`).innerHTML = `<img src="${e.target.result}">`;
-                    } else if (type === 'small') {
-                        smallImages[index] = img;
-                        document.getElementById(`preview-small-${index + 1}`).innerHTML = `<img src="${e.target.result}">`;
-                    } else if (type === 'cutout') {
-                        mikuCutout = img;
-                        document.getElementById('preview-cutout').innerHTML = `<img src="${e.target.result}">`;
-                    }
+                    mikuCutout = img;
+                    const previewBox = document.getElementById('preview-cutout');
+                    previewBox.innerHTML = `<img src="${e.target.result}">`;
                     redraw();
                 };
                 img.src = e.target.result;
@@ -662,195 +1241,308 @@
             reader.readAsDataURL(file);
         }
         
-        function resetToDefaults() {
-            if (!confirm('Reset all settings to defaults? This will not delete your uploaded images.')) return;
+        function handleBoxImageUpload(event, boxId) {
+            const file = event.target.files[0];
+            if (!file) return;
             
-            document.getElementById('mainText').value = 'Miku';
-            document.getElementById('subtitleText').value = 'Hatsune';
-            document.getElementById('mainFont').value = 'Comic Sans MS';
-            document.getElementById('subtitleFont').value = 'Trebuchet MS';
-            document.getElementById('mainTextSize').value = 85;
-            document.getElementById('subtitleTextSize').value = 38;
-            document.getElementById('bannerShape').value = 'rounded';
-            document.getElementById('bannerWidth').value = 780;
-            document.getElementById('bannerHeight').value = 140;
-            document.getElementById('bannerRotation').value = -3;
-            document.getElementById('showSparkles').checked = true;
-            document.getElementById('showDigitalCode').checked = true;
-            document.getElementById('digitalCodeText').value = '01';
-            document.getElementById('showMusicNotes').checked = true;
-            document.getElementById('musicNoteSymbol').value = '♪';
-            document.getElementById('showTempBg').checked = false;
+            const box = boxes.find(b => b.id === boxId);
+            if (!box) return;
             
-            syncColor('primaryColor', '#39C5BB');
-            syncColor('accentColor', '#FF6B9D');
-            syncColor('bannerColor', '#39C5BB');
-            
-            largeSizes = [330, 300, 280];
-            largeRotations = [45, 15, -20];
-            smallSizes = [80, 80, 80];
-            smallRotations = [45, 45, 45];
-            largeOpacity = [100, 100, 100];
-            smallOpacity = [100, 100, 100];
-            cutoutOpacity = 100;
-            
-            for (let i = 0; i < 3; i++) {
-                document.getElementById(`size-large-${i + 1}`).value = largeSizes[i];
-                document.getElementById(`rotation-large-${i + 1}`).value = largeRotations[i];
-                document.getElementById(`opacity-large-${i + 1}`).value = largeOpacity[i];
-                document.getElementById(`size-small-${i + 1}`).value = smallSizes[i];
-                document.getElementById(`rotation-small-${i + 1}`).value = smallRotations[i];
-                document.getElementById(`opacity-small-${i + 1}`).value = smallOpacity[i];
-            }
-            
-            updateValue('mainSize', 85);
-            updateValue('subtitleSize', 38);
-            updateValue('bannerWidth', 780);
-            updateValue('bannerHeight', 140);
-            updateValue('bannerRot', -3);
-            
-            redraw();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    box.image = img;
+                    const previewBox = document.getElementById(`preview-${boxId}`);
+                    previewBox.innerHTML = `<img src="${e.target.result}">`;
+                    redraw();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
         
-        function drawGradientSplash(x, y, radius, color, opacity = 0.6) {
+        // Drawing functions
+        function drawToContext(targetCtx, targetCanvas, scale = 1) {
+            targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+            
+            // Temp background - FIXED
+            const showTempBg = document.getElementById('showTempBg');
+            if (showTempBg && showTempBg.checked) {
+                targetCtx.fillStyle = '#2e2828';
+                targetCtx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
+            }
+            
+            // Scale context for mini preview
+            if (scale !== 1) {
+                targetCtx.save();
+                targetCtx.scale(scale, scale);
+            }
+            
+            // Background shapes
+            const bgShapeType = document.getElementById('bgShapeType').value;
+            if (bgShapeType === 'circles') {
+                drawGradientSplash(targetCtx, 600, 500, 450, primaryColor, 0.5);
+                drawGradientSplash(targetCtx, 1000, 650, 400, '#00D1D6', 0.4);
+                drawGradientSplash(targetCtx, 1400, 400, 350, accentColor, 0.3);
+                drawGradientSplash(targetCtx, 800, 850, 380, primaryColor, 0.35);
+            } else if (bgShapeType === 'hexagons') {
+                drawHexagonPattern(targetCtx);
+            } else if (bgShapeType === 'stars') {
+                drawStarPattern(targetCtx);
+            } else if (bgShapeType === 'diamonds') {
+                drawDiamondPattern(targetCtx);
+            }
+            
+            // Digital code
+            if (document.getElementById('showDigitalCode').checked) {
+                const codeText = document.getElementById('digitalCodeText').value || '01';
+                drawDigitalCode(targetCtx, 500, 400, codeText, 0.15);
+                drawDigitalCode(targetCtx, 1600, 850, codeText, 0.15);
+            }
+            
+            // Symbols
+            if (document.getElementById('showMusicNotes').checked) {
+                const symbol = document.getElementById('musicNoteSymbol').value;
+                drawSymbol(targetCtx, 620, 320, 48, 15, symbol);
+                drawSymbol(targetCtx, 1420, 280, 56, -20, symbol);
+                drawSymbol(targetCtx, 1650, 520, 40, 10, symbol);
+                drawSymbol(targetCtx, 850, 920, 44, -15, symbol);
+                drawSymbol(targetCtx, 1230, 970, 52, 25, symbol);
+                drawSymbol(targetCtx, 400, 720, 36, 0, symbol);
+            }
+            
+            // Glowing lines
+            drawGlowingLine(targetCtx, 400, 300, 1700, 400, primaryColor, 2);
+            drawGlowingLine(targetCtx, 450, 950, 1600, 850, accentColor, 2);
+            drawGlowingLine(targetCtx, 300, 600, 550, 400, '#00D1D6', 2);
+            
+            // Main cutout
+            if (mikuCutout) {
+                drawCutout(targetCtx, mikuCutout, 380, 600, 900, cutoutOpacity / 100, cutoutZoom / 100, cutoutOffsetX, cutoutOffsetY);
+            }
+            
+            // Boxes
+            boxes.forEach(box => {
+                if (box.image) {
+                    drawImageInBox(targetCtx, box);
+                } else {
+                    drawEmptyBox(targetCtx, box);
+                }
+            });
+            
+            // Banner
+            const bannerX = parseInt(document.getElementById('bannerX').value);
+            const bannerY = parseInt(document.getElementById('bannerY').value);
+            const bannerWidth = parseInt(document.getElementById('bannerWidth').value);
+            const bannerHeight = parseInt(document.getElementById('bannerHeight').value);
+            const bannerRotation = parseInt(document.getElementById('bannerRotation').value);
+            const bannerShape = document.getElementById('bannerShape').value;
+            const mainText = document.getElementById('mainText').value || 'Miku';
+            const subtitleText = document.getElementById('subtitleText').value || 'Hatsune';
+            
+            drawBanner(targetCtx, bannerX, bannerY, bannerWidth, bannerHeight, bannerRotation, mainText, subtitleText, bannerShape);
+            
+            if (scale !== 1) {
+                targetCtx.restore();
+            }
+        }
+        
+        function drawGradientSplash(ctx, x, y, radius, color, opacity = 0.6) {
             const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
             gradient.addColorStop(0, color + Math.floor(opacity * 255).toString(16).padStart(2, '0'));
             gradient.addColorStop(0.5, color + '44');
             gradient.addColorStop(1, color + '00');
-            
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, 2100, 1200);
         }
         
-        function drawImageInDiamond(img, x, y, size, rotation, opacity = 1.0) {
-            if (!img) return;
-            
-            ctx.save();
-            ctx.globalAlpha = opacity;
-            ctx.translate(x, y);
-            ctx.rotate(rotation * Math.PI / 180);
-            
+        function drawHexagonPattern(ctx) {
+            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 10; i++) {
+                const x = Math.random() * 2100;
+                const y = Math.random() * 1200;
+                const size = Math.random() * 100 + 50;
+                drawHexagon(ctx, x, y, size);
+            }
+        }
+        
+        function drawHexagon(ctx, x, y, size) {
             ctx.beginPath();
-            ctx.moveTo(0, -size);
-            ctx.lineTo(size, 0);
-            ctx.lineTo(0, size);
-            ctx.lineTo(-size, 0);
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                const px = x + size * Math.cos(angle);
+                const py = y + size * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
             ctx.closePath();
-            ctx.clip();
-            
-            const scale = Math.max(size * 2 / img.width, size * 2 / img.height);
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-            
-            ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-            
-            ctx.restore();
-            
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation * Math.PI / 180);
-            ctx.beginPath();
-            ctx.moveTo(0, -size);
-            ctx.lineTo(size, 0);
-            ctx.lineTo(0, size);
-            ctx.lineTo(-size, 0);
-            ctx.closePath();
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 4;
             ctx.stroke();
-            ctx.restore();
         }
         
-        function drawImageInSmallDiamond(img, x, y, size, rotation, opacity = 1.0) {
-            if (!img) {
-                drawSmallDiamond(x, y, size, rotation);
-                ctx.fillStyle = 'rgba(57, 197, 187, 0.3)';
+        function drawStarPattern(ctx) {
+            ctx.fillStyle = 'rgba(255, 107, 157, 0.3)';
+            for (let i = 0; i < 20; i++) {
+                const x = Math.random() * 2100;
+                const y = Math.random() * 1200;
+                const size = Math.random() * 15 + 5;
+                drawStar(ctx, x, y, 5, size, size / 2);
+            }
+        }
+        
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let step = Math.PI / spikes;
+            
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                let x = cx + Math.cos(rot) * outerRadius;
+                let y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+                
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function drawDiamondPattern(ctx) {
+            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 15; i++) {
+                const x = Math.random() * 2100;
+                const y = Math.random() * 1200;
+                const size = Math.random() * 60 + 30;
                 ctx.save();
                 ctx.translate(x, y);
-                ctx.rotate(rotation * Math.PI / 180);
-                ctx.fillRect(-size/2, -size/2, size, size);
+                ctx.rotate(45 * Math.PI / 180);
+                ctx.strokeRect(-size/2, -size/2, size, size);
                 ctx.restore();
-                
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 36px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('M', x, y);
-                return;
             }
-            
-            ctx.save();
-            ctx.globalAlpha = opacity;
-            ctx.translate(x, y);
-            ctx.rotate(rotation * Math.PI / 180);
-            
-            ctx.beginPath();
-            ctx.rect(-size/2, -size/2, size, size);
-            ctx.clip();
-            
-            const scale = Math.max(size / img.width, size / img.height);
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-            
-            ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-            
-            ctx.restore();
-            
-            drawSmallDiamond(x, y, size, rotation);
         }
         
-        function drawDiamond(x, y, size, rotation, strokeWidth = 4) {
+        function drawDigitalCode(ctx, x, y, text, opacity) {
+            ctx.save();
+            ctx.fillStyle = `rgba(57, 197, 187, ${opacity})`;
+            ctx.font = 'bold 200px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, x, y);
+            ctx.restore();
+        }
+        
+        function drawSymbol(ctx, x, y, size, rotation, symbol) {
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
-            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.font = `${size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(symbol, 0, 0);
+            ctx.restore();
+        }
+        
+        function drawGlowingLine(ctx, x1, y1, x2, y2, color, width = 3) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 15;
             ctx.beginPath();
-            ctx.moveTo(0, -size);
-            ctx.lineTo(size, 0);
-            ctx.lineTo(0, size);
-            ctx.lineTo(-size, 0);
-            ctx.closePath();
-            
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = strokeWidth;
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
             ctx.stroke();
-            
             ctx.restore();
         }
         
-        function drawSmallDiamond(x, y, size, rotation) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation * Math.PI / 180);
-            
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(-size/2, -size/2, size, size);
-            
-            ctx.restore();
-        }
-        
-        function drawMikuCutout(img, x, y, maxHeight, opacity = 1.0) {
-            if (!img) return;
-            
+        function drawCutout(ctx, img, x, y, maxHeight, opacity, zoom, offsetX, offsetY) {
             ctx.save();
             ctx.globalAlpha = opacity;
             
-            const scale = maxHeight / img.height;
+            const scale = (maxHeight / img.height) * zoom;
             const scaledWidth = img.width * scale;
             const scaledHeight = img.height * scale;
             
             ctx.shadowColor = primaryColor;
             ctx.shadowBlur = 30;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
+            ctx.drawImage(img, x - scaledWidth / 2 + offsetX, y - scaledHeight / 2 + offsetY, scaledWidth, scaledHeight);
+            ctx.restore();
+        }
+        
+        function drawImageInBox(ctx, box) {
+            ctx.save();
+            ctx.globalAlpha = box.opacity / 100;
+            ctx.translate(box.x, box.y);
+            ctx.rotate(box.rotation * Math.PI / 180);
             
-            ctx.drawImage(img, x - scaledWidth / 2, y - scaledHeight / 2, scaledWidth, scaledHeight);
+            // Clipping
+            ctx.beginPath();
+            ctx.moveTo(0, -box.size);
+            ctx.lineTo(box.size, 0);
+            ctx.lineTo(0, box.size);
+            ctx.lineTo(-box.size, 0);
+            ctx.closePath();
+            ctx.clip();
+            
+            const zoom = box.zoom / 100;
+            const scale = Math.max(box.size * 2 / box.image.width, box.size * 2 / box.image.height) * zoom;
+            const scaledWidth = box.image.width * scale;
+            const scaledHeight = box.image.height * scale;
+            
+            ctx.drawImage(box.image, -scaledWidth / 2 + box.offsetX, -scaledHeight / 2 + box.offsetY, scaledWidth, scaledHeight);
+            ctx.restore();
+            
+            // Border
+            ctx.save();
+            ctx.translate(box.x, box.y);
+            ctx.rotate(box.rotation * Math.PI / 180);
+            ctx.beginPath();
+            ctx.moveTo(0, -box.size);
+            ctx.lineTo(box.size, 0);
+            ctx.lineTo(0, box.size);
+            ctx.lineTo(-box.size, 0);
+            ctx.closePath();
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        
+        function drawEmptyBox(ctx, box) {
+            ctx.save();
+            ctx.translate(box.x, box.y);
+            ctx.rotate(box.rotation * Math.PI / 180);
+            ctx.beginPath();
+            ctx.moveTo(0, -box.size);
+            ctx.lineTo(box.size, 0);
+            ctx.lineTo(0, box.size);
+            ctx.lineTo(-box.size, 0);
+            ctx.closePath();
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // Show marker if enabled
+            if (document.getElementById('showBoxMarkers').checked) {
+                ctx.fillStyle = primaryColor;
+                ctx.font = 'bold 60px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.globalAlpha = 0.3;
+                ctx.fillText(box.id.toString(), 0, 0);
+            }
             
             ctx.restore();
         }
         
-        function drawBanner(x, y, width, height, rotation, text, subtext, shape) {
+        function drawBanner(ctx, x, y, width, height, rotation, text, subtext, shape) {
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
@@ -862,7 +1554,6 @@
             
             ctx.fillStyle = gradient;
             
-            // Draw shape based on selection
             if (shape === 'rounded') {
                 const radius = 20;
                 ctx.beginPath();
@@ -892,7 +1583,6 @@
             } else if (shape === 'ellipse') {
                 ctx.beginPath();
                 ctx.ellipse(0, 0, width/2, height/2, 0, 0, Math.PI * 2);
-                ctx.closePath();
             } else if (shape === 'diamond') {
                 ctx.beginPath();
                 ctx.moveTo(0, -height/2);
@@ -904,11 +1594,13 @@
             
             ctx.fill();
             
+            // Glow
             ctx.shadowColor = bannerColor;
             ctx.shadowBlur = 25;
             ctx.fill();
             ctx.shadowBlur = 0;
             
+            // Border
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.stroke();
@@ -919,11 +1611,9 @@
             ctx.stroke();
             ctx.globalAlpha = 1.0;
             
-            // Draw text
+            // Text
             const mainFont = document.getElementById('mainFont').value;
-            const subtitleFont = document.getElementById('subtitleFont').value;
             const mainSize = document.getElementById('mainTextSize').value;
-            const subtitleSize = document.getElementById('subtitleTextSize').value;
             
             ctx.shadowColor = '#000000';
             ctx.shadowBlur = 15;
@@ -963,8 +1653,10 @@
             
             ctx.restore();
             
+            const subtitleFont = document.getElementById('subtitleFont').value;
+            const subtitleSize = document.getElementById('subtitleTextSize').value;
             ctx.shadowBlur = 10;
-            ctx.font = `bold ${subtitleSize}px "${subtitleFont}", sans-serif`;
+            ctx.font = `bold ${subtitleSize}px "${subtitleFont}"`;
             
             ctx.strokeStyle = primaryColor;
             ctx.lineWidth = 6;
@@ -977,7 +1669,7 @@
             ctx.fillStyle = 'white';
             ctx.fillText(subtext, 0, height/4);
             
-            // Draw sparkles if enabled
+            // Sparkles
             if (document.getElementById('showSparkles').checked) {
                 ctx.shadowBlur = 0;
                 const sparkles = [
@@ -988,17 +1680,16 @@
                 ];
                 
                 sparkles.forEach(sparkle => {
-                    drawSparkle(sparkle.x, sparkle.y, 6);
+                    drawSparkle(ctx, sparkle.x, sparkle.y, 6);
                 });
             }
             
             ctx.restore();
         }
         
-        function drawSparkle(x, y, size) {
+        function drawSparkle(ctx, x, y, size) {
             ctx.save();
             ctx.translate(x, y);
-            
             ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             ctx.beginPath();
             
@@ -1020,166 +1711,23 @@
             
             ctx.closePath();
             ctx.fill();
-            
             ctx.shadowColor = 'white';
             ctx.shadowBlur = 8;
             ctx.fill();
-            
             ctx.restore();
-        }
-        
-        function drawMusicNote(x, y, size, rotation = 0) {
-            if (!document.getElementById('showMusicNotes').checked) return;
-            
-            const symbol = document.getElementById('musicNoteSymbol').value;
-            
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation * Math.PI / 180);
-            
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.font = `${size}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(symbol, 0, 0);
-            
-            ctx.restore();
-        }
-        
-        function drawDigitalCode(x, y, opacity = 0.2) {
-            if (!document.getElementById('showDigitalCode').checked) return;
-            
-            const codeText = document.getElementById('digitalCodeText').value || '01';
-            
-            ctx.save();
-            ctx.fillStyle = `rgba(57, 197, 187, ${opacity})`;
-            ctx.font = 'bold 200px Courier New';
-            ctx.textAlign = 'center';
-            ctx.fillText(codeText, x, y);
-            ctx.restore();
-        }
-        
-        function drawGlowingLine(x1, y1, x2, y2, color, width = 3) {
-            ctx.save();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width;
-            ctx.shadowColor = color;
-            ctx.shadowBlur = 15;
-            
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-            
-            ctx.restore();
-        }
-        
-        function drawParticles() {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            for (let i = 0; i < 100; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                const size = Math.random() * 3 + 1;
-                
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
         }
         
         function redraw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw temp background if enabled
-            if (document.getElementById('showTempBg').checked) {
-                ctx.fillStyle = '#2e2828';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            
-            drawGradientSplash(600, 500, 450, primaryColor, 0.5);
-            drawGradientSplash(1000, 650, 400, '#00D1D6', 0.4);
-            drawGradientSplash(1400, 400, 350, accentColor, 0.3);
-            drawGradientSplash(800, 850, 380, primaryColor, 0.35);
-            
-            drawDigitalCode(500, 400, 0.15);
-            drawDigitalCode(1600, 850, 0.15);
-            
-            drawParticles();
-            
-            drawGlowingLine(400, 300, 1700, 400, primaryColor, 2);
-            drawGlowingLine(450, 950, 1600, 850, accentColor, 2);
-            drawGlowingLine(300, 600, 550, 400, '#00D1D6', 2);
-            
-            if (mikuCutout) {
-                drawMikuCutout(mikuCutout, 380, 600, 900, cutoutOpacity / 100);
-            }
-            
-            const largeDiamonds = [
-                { x: 920, y: 450 },
-                { x: 1250, y: 600 },
-                { x: 1530, y: 400 }
-            ];
-            
-            largeDiamonds.forEach((diamond, index) => {
-                if (largeImages[index]) {
-                    drawImageInDiamond(
-                        largeImages[index], 
-                        diamond.x, 
-                        diamond.y, 
-                        largeSizes[index], 
-                        largeRotations[index], 
-                        largeOpacity[index] / 100
-                    );
-                } else {
-                    drawDiamond(diamond.x, diamond.y, largeSizes[index], largeRotations[index], 4);
-                }
-            });
-            
-            const portraitX = 1830;
-            const portraitYStart = 700;
-            for (let i = 0; i < 3; i++) {
-                const y = portraitYStart + (i * 130);
-                drawImageInSmallDiamond(
-                    smallImages[i], 
-                    portraitX, 
-                    y, 
-                    smallSizes[i], 
-                    smallRotations[i], 
-                    smallOpacity[i] / 100
-                );
-            }
-            
-            drawMusicNote(620, 320, 48, 15);
-            drawMusicNote(1420, 280, 56, -20);
-            drawMusicNote(1650, 520, 40, 10);
-            drawMusicNote(850, 920, 44, -15);
-            drawMusicNote(1230, 970, 52, 25);
-            drawMusicNote(400, 720, 36, 0);
-            
-            const mainText = document.getElementById('mainText').value || 'Miku';
-            const subtitleText = document.getElementById('subtitleText').value || 'Hatsune';
-            const bannerShape = document.getElementById('bannerShape').value;
-            const bannerWidth = parseInt(document.getElementById('bannerWidth').value);
-            const bannerHeight = parseInt(document.getElementById('bannerHeight').value);
-            const bannerRotation = parseInt(document.getElementById('bannerRotation').value);
-            
-            drawBanner(1050, 800, bannerWidth, bannerHeight, bannerRotation, mainText, subtitleText, bannerShape);
-            
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < 20; i++) {
-                const x1 = SAFE_ZONE.x + 100 + Math.random() * (SAFE_ZONE.width - 200);
-                const y1 = SAFE_ZONE.y + 100 + Math.random() * (SAFE_ZONE.height - 200);
-                const length = Math.random() * 100 + 50;
-                const angle = Math.random() * 360;
-                const x2 = x1 + Math.cos(angle * Math.PI / 180) * length;
-                const y2 = y1 + Math.sin(angle * Math.PI / 180) * length;
-                
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
-            }
+            drawToContext(ctx, canvas, canvas.width / 1920);
+        }
+        
+        function openPreview() {
+            drawToContext(previewCtx, previewCanvas, 1);
+            document.getElementById('previewModal').classList.add('active');
+        }
+        
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('active');
         }
         
         function downloadImage() {
@@ -1188,20 +1736,14 @@
             exportCanvas.height = 1080;
             const exportCtx = exportCanvas.getContext('2d');
             
-            // Temporarily disable temp background
             const tempBgWasChecked = document.getElementById('showTempBg').checked;
             if (tempBgWasChecked) {
                 document.getElementById('showTempBg').checked = false;
-                redraw();
             }
             
-            exportCtx.drawImage(
-                canvas, 
-                SAFE_ZONE.x, SAFE_ZONE.y, SAFE_ZONE.width, SAFE_ZONE.height,
-                0, 0, 1920, 1080
-            );
+            drawToContext(previewCtx, previewCanvas, 1);
+            exportCtx.drawImage(previewCanvas, 90, 60, 1920, 1080, 0, 0, 1920, 1080);
             
-            // Restore temp background state
             if (tempBgWasChecked) {
                 document.getElementById('showTempBg').checked = true;
                 redraw();
@@ -1214,9 +1756,68 @@
             link.click();
         }
         
-        redraw();
+        // Save/Load
+        function saveConfiguration() {
+            const config = {
+                settings: {
+                    mainText: document.getElementById('mainText').value,
+                    subtitleText: document.getElementById('subtitleText').value,
+                    primaryColor, accentColor, bannerColor
+                },
+                boxes: boxes.map(b => ({...b, image: null})),
+                cutout: { opacity: cutoutOpacity, zoom: cutoutZoom, offsetX: cutoutOffsetX, offsetY: cutoutOffsetY }
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.download = 'miku-config.json';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+        }
+        
+        function loadConfiguration(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    alert('Configuration loaded! (Images not included - please re-upload)');
+                    redraw();
+                } catch (err) {
+                    alert('Error loading configuration file');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Presets
+        function applyPreset(preset) {
+            if (preset === 'miku') {
+                primaryColor = '#39C5BB';
+                accentColor = '#FF6B9D';
+                bannerColor = '#39C5BB';
+                syncColor('primaryColor', primaryColor);
+                syncColor('accentColor', accentColor);
+                syncColor('bannerColor', bannerColor);
+            }
+            redraw();
+        }
+        
+        function resetToDefaults() {
+            if (!confirm('Reset all settings? Images will be kept.')) return;
+            location.reload();
+        }
+        
+        function clearAllImages() {
+            if (!confirm('Clear all uploaded images?')) return;
+            mikuCutout = null;
+            boxes.forEach(b => b.image = null);
+            document.getElementById('preview-cutout').innerHTML = '<span class="box-marker">C</span>';
+            generateBoxControls();
+            redraw();
+        }
     </script>
 </body>
 </html>
-
-
