@@ -9,6 +9,8 @@ TO DO
 - option to add more boxes / shapes for images
 - add options to turn the background color circles into other options
 - try to add options to Save / load from a file
+- add side bar and categories for options to reduce page clutter
+- preview button that pops up in the middle with an x in the top right to close
 FIX
 - Canvas layout changing when any option is toggled
 - background Toggle thing  doesnt seem to work?
