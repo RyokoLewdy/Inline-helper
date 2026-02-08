@@ -11,6 +11,7 @@ TO DO
 - try to add options to Save / load from a file
 - add side bar and categories for options to reduce page clutter
 - preview button that pops up in the middle with an x in the top right to close
+- option to move x and y coordinates
 FIX
 - Canvas layout changing when any option is toggled
 - background Toggle thing  doesnt seem to work?
