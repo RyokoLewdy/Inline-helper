@@ -1756,16 +1756,51 @@
             link.click();
         }
         
-        // Save/Load
+        // Save/Load - COMPLETE VERSION
         function saveConfiguration() {
             const config = {
                 settings: {
                     mainText: document.getElementById('mainText').value,
                     subtitleText: document.getElementById('subtitleText').value,
-                    primaryColor, accentColor, bannerColor
+                    mainFont: document.getElementById('mainFont').value,
+                    subtitleFont: document.getElementById('subtitleFont').value,
+                    mainTextSize: document.getElementById('mainTextSize').value,
+                    subtitleTextSize: document.getElementById('subtitleTextSize').value,
+                    bannerShape: document.getElementById('bannerShape').value,
+                    bannerX: document.getElementById('bannerX').value,
+                    bannerY: document.getElementById('bannerY').value,
+                    bannerWidth: document.getElementById('bannerWidth').value,
+                    bannerHeight: document.getElementById('bannerHeight').value,
+                    bannerRotation: document.getElementById('bannerRotation').value,
+                    showSparkles: document.getElementById('showSparkles').checked,
+                    primaryColor: primaryColor,
+                    accentColor: accentColor,
+                    bannerColor: bannerColor,
+                    bgShapeType: document.getElementById('bgShapeType').value,
+                    showDigitalCode: document.getElementById('showDigitalCode').checked,
+                    digitalCodeText: document.getElementById('digitalCodeText').value,
+                    showMusicNotes: document.getElementById('showMusicNotes').checked,
+                    musicNoteSymbol: document.getElementById('musicNoteSymbol').value,
+                    showBoxMarkers: document.getElementById('showBoxMarkers').checked
                 },
-                boxes: boxes.map(b => ({...b, image: null})),
-                cutout: { opacity: cutoutOpacity, zoom: cutoutZoom, offsetX: cutoutOffsetX, offsetY: cutoutOffsetY }
+                boxes: boxes.map(b => ({
+                    id: b.id,
+                    type: b.type,
+                    x: b.x,
+                    y: b.y,
+                    size: b.size,
+                    rotation: b.rotation,
+                    opacity: b.opacity,
+                    zoom: b.zoom,
+                    offsetX: b.offsetX,
+                    offsetY: b.offsetY
+                })),
+                cutout: {
+                    opacity: cutoutOpacity,
+                    zoom: cutoutZoom,
+                    offsetX: cutoutOffsetX,
+                    offsetY: cutoutOffsetY
+                }
             };
             
             const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
@@ -1783,10 +1818,73 @@
             reader.onload = function(e) {
                 try {
                     const config = JSON.parse(e.target.result);
-                    alert('Configuration loaded! (Images not included - please re-upload)');
+                    
+                    // Apply settings
+                    if (config.settings) {
+                        document.getElementById('mainText').value = config.settings.mainText || 'Miku';
+                        document.getElementById('subtitleText').value = config.settings.subtitleText || 'Hatsune';
+                        document.getElementById('mainFont').value = config.settings.mainFont || 'Comic Sans MS';
+                        document.getElementById('subtitleFont').value = config.settings.subtitleFont || 'Trebuchet MS';
+                        document.getElementById('mainTextSize').value = config.settings.mainTextSize || 85;
+                        document.getElementById('mainTextSizeValue').value = config.settings.mainTextSize || 85;
+                        document.getElementById('subtitleTextSize').value = config.settings.subtitleTextSize || 38;
+                        document.getElementById('subtitleTextSizeValue').value = config.settings.subtitleTextSize || 38;
+                        document.getElementById('bannerShape').value = config.settings.bannerShape || 'rounded';
+                        document.getElementById('bannerX').value = config.settings.bannerX || 1050;
+                        document.getElementById('bannerXValue').value = config.settings.bannerX || 1050;
+                        document.getElementById('bannerY').value = config.settings.bannerY || 800;
+                        document.getElementById('bannerYValue').value = config.settings.bannerY || 800;
+                        document.getElementById('bannerWidth').value = config.settings.bannerWidth || 780;
+                        document.getElementById('bannerWidthValue').value = config.settings.bannerWidth || 780;
+                        document.getElementById('bannerHeight').value = config.settings.bannerHeight || 140;
+                        document.getElementById('bannerHeightValue').value = config.settings.bannerHeight || 140;
+                        document.getElementById('bannerRotation').value = config.settings.bannerRotation || -3;
+                        document.getElementById('bannerRotationValue').value = config.settings.bannerRotation || -3;
+                        document.getElementById('showSparkles').checked = config.settings.showSparkles !== false;
+                        document.getElementById('bgShapeType').value = config.settings.bgShapeType || 'circles';
+                        document.getElementById('showDigitalCode').checked = config.settings.showDigitalCode !== false;
+                        document.getElementById('digitalCodeText').value = config.settings.digitalCodeText || '01';
+                        document.getElementById('showMusicNotes').checked = config.settings.showMusicNotes !== false;
+                        document.getElementById('musicNoteSymbol').value = config.settings.musicNoteSymbol || '♪';
+                        document.getElementById('showBoxMarkers').checked = config.settings.showBoxMarkers !== false;
+                        
+                        // Colors
+                        if (config.settings.primaryColor) syncColor('primaryColor', config.settings.primaryColor);
+                        if (config.settings.accentColor) syncColor('accentColor', config.settings.accentColor);
+                        if (config.settings.bannerColor) syncColor('bannerColor', config.settings.bannerColor);
+                    }
+                    
+                    // Apply boxes
+                    if (config.boxes) {
+                        boxes = config.boxes.map(b => ({
+                            ...b,
+                            image: null
+                        }));
+                        nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
+                        generateBoxControls();
+                    }
+                    
+                    // Apply cutout settings
+                    if (config.cutout) {
+                        cutoutOpacity = config.cutout.opacity || 100;
+                        cutoutZoom = config.cutout.zoom || 100;
+                        cutoutOffsetX = config.cutout.offsetX || 0;
+                        cutoutOffsetY = config.cutout.offsetY || 0;
+                        
+                        document.getElementById('opacity-cutout').value = cutoutOpacity;
+                        document.getElementById('opacity-cutoutValue').value = cutoutOpacity;
+                        document.getElementById('zoom-cutout').value = cutoutZoom;
+                        document.getElementById('zoom-cutoutValue').value = cutoutZoom;
+                        document.getElementById('offsetX-cutout').value = cutoutOffsetX;
+                        document.getElementById('offsetX-cutoutValue').value = cutoutOffsetX;
+                        document.getElementById('offsetY-cutout').value = cutoutOffsetY;
+                        document.getElementById('offsetY-cutoutValue').value = cutoutOffsetY;
+                    }
+                    
+                    alert('Configuration loaded successfully! (Note: Images are not included and need to be re-uploaded)');
                     redraw();
                 } catch (err) {
-                    alert('Error loading configuration file');
+                    alert('Error loading configuration file: ' + err.message);
                 }
             };
             reader.readAsText(file);
@@ -1863,5 +1961,6 @@
     </script>
 </body>
 </html>
+
 
 
