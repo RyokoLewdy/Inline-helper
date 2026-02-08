@@ -572,12 +572,12 @@
                     </div>
                     <div class="collapsible-content">
                         <div class="control-group">
-                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration</button>
+                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration (Does not save images and idk why)</button>
                             <p class="info-text">Downloads a .json file with all your settings</p>
                         </div>
                         
                         <div class="control-group">
-                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration</button>
+                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration (does not Load Images and I still dunno why)</button>
                             <input type="file" id="loadConfig" accept=".json" onchange="loadConfiguration(event)">
                             <p class="info-text">Upload a previously saved .json file</p>
                         </div>
@@ -1966,6 +1966,7 @@
     </script>
 </body>
 </html>
+
 
 
 
