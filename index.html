@@ -772,7 +772,7 @@
                         
                         <div class="control-group">
                             <label class="control-label">Digital Code Text</label>
-                            <input type="text" id="digitalCodeText" value="01" maxlength="10" oninput="redraw()">
+                            <input type="text" id="digitalCodeText" value="01" maxlength="3" oninput="redraw()">
                         </div>
                         
                         <div class="control-group">
@@ -1358,18 +1358,13 @@
         }
         
         function drawHexagonPattern(ctx) {
-            // Gradient hexagons
+            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
+            ctx.lineWidth = 2;
             for (let i = 0; i < 10; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 100 + 50;
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 1.5);
-                gradient.addColorStop(0, primaryColor + '99');
-                gradient.addColorStop(0.5, accentColor + '44');
-                gradient.addColorStop(1, primaryColor + '00');
-                ctx.fillStyle = gradient;
                 drawHexagon(ctx, x, y, size);
-                ctx.fill();
             }
         }
         
@@ -1387,16 +1382,11 @@
         }
         
         function drawStarPattern(ctx) {
-            // Gradient stars
+            ctx.fillStyle = 'rgba(255, 107, 157, 0.3)';
             for (let i = 0; i < 20; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
-                const size = Math.random() * 20 + 10;
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
-                gradient.addColorStop(0, accentColor + 'CC');
-                gradient.addColorStop(0.6, primaryColor + '66');
-                gradient.addColorStop(1, '#00D1D6' + '00');
-                ctx.fillStyle = gradient;
+                const size = Math.random() * 15 + 5;
                 drawStar(ctx, x, y, 5, size, size / 2);
             }
         }
@@ -1424,20 +1414,16 @@
         }
         
         function drawDiamondPattern(ctx) {
-            // Gradient diamonds
+            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
+            ctx.lineWidth = 2;
             for (let i = 0; i < 15; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 60 + 30;
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 1.2);
-                gradient.addColorStop(0, primaryColor + 'AA');
-                gradient.addColorStop(0.5, accentColor + '55');
-                gradient.addColorStop(1, primaryColor + '00');
-                ctx.fillStyle = gradient;
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(45 * Math.PI / 180);
-                ctx.fillRect(-size/2, -size/2, size, size);
+                ctx.strokeRect(-size/2, -size/2, size, size);
                 ctx.restore();
             }
         }
@@ -1770,51 +1756,16 @@
             link.click();
         }
         
-        // Save/Load - COMPLETE VERSION
+        // Save/Load
         function saveConfiguration() {
             const config = {
                 settings: {
                     mainText: document.getElementById('mainText').value,
                     subtitleText: document.getElementById('subtitleText').value,
-                    mainFont: document.getElementById('mainFont').value,
-                    subtitleFont: document.getElementById('subtitleFont').value,
-                    mainTextSize: document.getElementById('mainTextSize').value,
-                    subtitleTextSize: document.getElementById('subtitleTextSize').value,
-                    bannerShape: document.getElementById('bannerShape').value,
-                    bannerX: document.getElementById('bannerX').value,
-                    bannerY: document.getElementById('bannerY').value,
-                    bannerWidth: document.getElementById('bannerWidth').value,
-                    bannerHeight: document.getElementById('bannerHeight').value,
-                    bannerRotation: document.getElementById('bannerRotation').value,
-                    showSparkles: document.getElementById('showSparkles').checked,
-                    primaryColor: primaryColor,
-                    accentColor: accentColor,
-                    bannerColor: bannerColor,
-                    bgShapeType: document.getElementById('bgShapeType').value,
-                    showDigitalCode: document.getElementById('showDigitalCode').checked,
-                    digitalCodeText: document.getElementById('digitalCodeText').value,
-                    showMusicNotes: document.getElementById('showMusicNotes').checked,
-                    musicNoteSymbol: document.getElementById('musicNoteSymbol').value,
-                    showBoxMarkers: document.getElementById('showBoxMarkers').checked
+                    primaryColor, accentColor, bannerColor
                 },
-                boxes: boxes.map(b => ({
-                    id: b.id,
-                    type: b.type,
-                    x: b.x,
-                    y: b.y,
-                    size: b.size,
-                    rotation: b.rotation,
-                    opacity: b.opacity,
-                    zoom: b.zoom,
-                    offsetX: b.offsetX,
-                    offsetY: b.offsetY
-                })),
-                cutout: {
-                    opacity: cutoutOpacity,
-                    zoom: cutoutZoom,
-                    offsetX: cutoutOffsetX,
-                    offsetY: cutoutOffsetY
-                }
+                boxes: boxes.map(b => ({...b, image: null})),
+                cutout: { opacity: cutoutOpacity, zoom: cutoutZoom, offsetX: cutoutOffsetX, offsetY: cutoutOffsetY }
             };
             
             const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
@@ -1832,73 +1783,10 @@
             reader.onload = function(e) {
                 try {
                     const config = JSON.parse(e.target.result);
-                    
-                    // Apply settings
-                    if (config.settings) {
-                        document.getElementById('mainText').value = config.settings.mainText || 'Miku';
-                        document.getElementById('subtitleText').value = config.settings.subtitleText || 'Hatsune';
-                        document.getElementById('mainFont').value = config.settings.mainFont || 'Comic Sans MS';
-                        document.getElementById('subtitleFont').value = config.settings.subtitleFont || 'Trebuchet MS';
-                        document.getElementById('mainTextSize').value = config.settings.mainTextSize || 85;
-                        document.getElementById('mainTextSizeValue').value = config.settings.mainTextSize || 85;
-                        document.getElementById('subtitleTextSize').value = config.settings.subtitleTextSize || 38;
-                        document.getElementById('subtitleTextSizeValue').value = config.settings.subtitleTextSize || 38;
-                        document.getElementById('bannerShape').value = config.settings.bannerShape || 'rounded';
-                        document.getElementById('bannerX').value = config.settings.bannerX || 1050;
-                        document.getElementById('bannerXValue').value = config.settings.bannerX || 1050;
-                        document.getElementById('bannerY').value = config.settings.bannerY || 800;
-                        document.getElementById('bannerYValue').value = config.settings.bannerY || 800;
-                        document.getElementById('bannerWidth').value = config.settings.bannerWidth || 780;
-                        document.getElementById('bannerWidthValue').value = config.settings.bannerWidth || 780;
-                        document.getElementById('bannerHeight').value = config.settings.bannerHeight || 140;
-                        document.getElementById('bannerHeightValue').value = config.settings.bannerHeight || 140;
-                        document.getElementById('bannerRotation').value = config.settings.bannerRotation || -3;
-                        document.getElementById('bannerRotationValue').value = config.settings.bannerRotation || -3;
-                        document.getElementById('showSparkles').checked = config.settings.showSparkles !== false;
-                        document.getElementById('bgShapeType').value = config.settings.bgShapeType || 'circles';
-                        document.getElementById('showDigitalCode').checked = config.settings.showDigitalCode !== false;
-                        document.getElementById('digitalCodeText').value = config.settings.digitalCodeText || '01';
-                        document.getElementById('showMusicNotes').checked = config.settings.showMusicNotes !== false;
-                        document.getElementById('musicNoteSymbol').value = config.settings.musicNoteSymbol || '♪';
-                        document.getElementById('showBoxMarkers').checked = config.settings.showBoxMarkers !== false;
-                        
-                        // Colors
-                        if (config.settings.primaryColor) syncColor('primaryColor', config.settings.primaryColor);
-                        if (config.settings.accentColor) syncColor('accentColor', config.settings.accentColor);
-                        if (config.settings.bannerColor) syncColor('bannerColor', config.settings.bannerColor);
-                    }
-                    
-                    // Apply boxes
-                    if (config.boxes) {
-                        boxes = config.boxes.map(b => ({
-                            ...b,
-                            image: null
-                        }));
-                        nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
-                        generateBoxControls();
-                    }
-                    
-                    // Apply cutout settings
-                    if (config.cutout) {
-                        cutoutOpacity = config.cutout.opacity || 100;
-                        cutoutZoom = config.cutout.zoom || 100;
-                        cutoutOffsetX = config.cutout.offsetX || 0;
-                        cutoutOffsetY = config.cutout.offsetY || 0;
-                        
-                        document.getElementById('opacity-cutout').value = cutoutOpacity;
-                        document.getElementById('opacity-cutoutValue').value = cutoutOpacity;
-                        document.getElementById('zoom-cutout').value = cutoutZoom;
-                        document.getElementById('zoom-cutoutValue').value = cutoutZoom;
-                        document.getElementById('offsetX-cutout').value = cutoutOffsetX;
-                        document.getElementById('offsetX-cutoutValue').value = cutoutOffsetX;
-                        document.getElementById('offsetY-cutout').value = cutoutOffsetY;
-                        document.getElementById('offsetY-cutoutValue').value = cutoutOffsetY;
-                    }
-                    
-                    alert('Configuration loaded successfully! (Note: Images are not included and need to be re-uploaded)');
+                    alert('Configuration loaded! (Images not included - please re-upload)');
                     redraw();
                 } catch (err) {
-                    alert('Error loading configuration file: ' + err.message);
+                    alert('Error loading configuration file');
                 }
             };
             reader.readAsText(file);
@@ -1906,58 +1794,14 @@
         
         // Presets
         function applyPreset(preset) {
-        // Presets - WORKING VERSION
-        function applyPreset(preset) {
             if (preset === 'miku') {
-                // Classic Miku layout
                 primaryColor = '#39C5BB';
                 accentColor = '#FF6B9D';
                 bannerColor = '#39C5BB';
                 syncColor('primaryColor', primaryColor);
                 syncColor('accentColor', accentColor);
                 syncColor('bannerColor', bannerColor);
-                
-                boxes = [
-                    { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
-                ];
-                
-            } else if (preset === 'minimal') {
-                // Minimal layout - single centered box
-                boxes = [
-                    { id: 1, type: 'large', x: 1200, y: 500, size: 400, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
-                ];
-                
-            } else if (preset === 'grid') {
-                // Grid layout - 2x2
-                boxes = [
-                    { id: 1, type: 'large', x: 800, y: 400, size: 250, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1200, y: 400, size: 250, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 800, y: 750, size: 250, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 4, type: 'large', x: 1200, y: 750, size: 250, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
-                ];
-                
-            } else if (preset === 'diagonal') {
-                // Diagonal layout
-                boxes = [
-                    { id: 1, type: 'large', x: 700, y: 350, size: 280, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1100, y: 550, size: 280, rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1500, y: 750, size: 280, rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
-                ];
-                
-            } else if (preset === 'centered') {
-                // Centered circular layout
-                boxes = [
-                    { id: 1, type: 'large', x: 1050, y: 300, size: 220, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 750, y: 600, size: 220, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1350, y: 600, size: 220, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 4, type: 'large', x: 1050, y: 850, size: 220, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
-                ];
             }
-            
-            nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
-            generateBoxControls();
             redraw();
         }
         
@@ -1977,6 +1821,3 @@
     </script>
 </body>
 </html>
-
-
-
