@@ -8,6 +8,7 @@ TO DO
 - add ability to enter number values alongside the sliders
 - option to add more boxes / shapes for images
 - add options to turn the background color circles into other options
+- try to add options to Save / load from a file
 FIX
 - Canvas layout changing when any option is toggled
 - background Toggle thing  doesnt seem to work?
