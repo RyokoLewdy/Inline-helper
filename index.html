@@ -1327,10 +1327,13 @@
                 drawSymbol(targetCtx, 400, 720, 36, 0, symbol);
             }
             
-            // Glowing lines
-            drawGlowingLine(targetCtx, 400, 300, 1700, 400, primaryColor, 2);
-            drawGlowingLine(targetCtx, 450, 950, 1600, 850, accentColor, 2);
-            drawGlowingLine(targetCtx, 300, 600, 550, 400, '#00D1D6', 2);
+            // Glowing lines - controlled by checkbox
+            const showLines = document.getElementById('showBackgroundLines');
+            if (showLines && showLines.checked) {
+                drawGlowingLine(targetCtx, 400, 300, 1700, 400, primaryColor, 2);
+                drawGlowingLine(targetCtx, 450, 950, 1600, 850, accentColor, 2);
+                drawGlowingLine(targetCtx, 300, 600, 550, 400, '#00D1D6', 2);
+            }
             
             // Main cutout
             if (mikuCutout) {
@@ -1976,6 +1979,7 @@
     </script>
 </body>
 </html>
+
 
 
 
