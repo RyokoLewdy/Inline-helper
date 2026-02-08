@@ -5,5 +5,7 @@ TO DO
 - Zoom options for Images 
 - Collapse / Drop down options for the options / settings
 - add Markers to designate box numbers that dont show up when images are there.
+- add ability to enter number values alongside the sliders
+
 FIX
 -Canvas layout changing when any option is toggled
