@@ -666,6 +666,86 @@
                     </div>
                 </div>
                 
+              </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>✨ Text Blending Options</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <label class="control-label">Text Stroke Width</label>
+                            <div class="control-row">
+                                <input type="range" id="textStrokeWidth" min="0" max="20" value="12" oninput="syncSlider('textStrokeWidth', this.value)">
+                                <input type="number" class="range-value" id="textStrokeWidthValue" min="0" max="20" value="12" oninput="syncNumber('textStrokeWidth', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enableDropShadow" checked onchange="redraw()">
+                                <label class="control-label">Enable Drop Shadow</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Shadow Blur</label>
+                            <div class="control-row">
+                                <input type="range" id="shadowBlur" min="0" max="50" value="15" oninput="syncSlider('shadowBlur', this.value)">
+                                <input type="number" class="range-value" id="shadowBlurValue" min="0" max="50" value="15" oninput="syncNumber('shadowBlur', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Shadow Offset X</label>
+                            <div class="control-row">
+                                <input type="range" id="shadowOffsetX" min="-20" max="20" value="5" oninput="syncSlider('shadowOffsetX', this.value)">
+                                <input type="number" class="range-value" id="shadowOffsetXValue" min="-20" max="20" value="5" oninput="syncNumber('shadowOffsetX', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Shadow Offset Y</label>
+                            <div class="control-row">
+                                <input type="range" id="shadowOffsetY" min="-20" max="20" value="5" oninput="syncSlider('shadowOffsetY', this.value)">
+                                <input type="number" class="range-value" id="shadowOffsetYValue" min="-20" max="20" value="5" oninput="syncNumber('shadowOffsetY', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enableOuterGlow" onchange="redraw()">
+                                <label class="control-label">Enable Outer Glow</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Outer Glow Intensity</label>
+                            <div class="control-row">
+                                <input type="range" id="outerGlowIntensity" min="0" max="50" value="20" oninput="syncSlider('outerGlowIntensity', this.value)">
+                                <input type="number" class="range-value" id="outerGlowIntensityValue" min="0" max="50" value="20" oninput="syncNumber('outerGlowIntensity', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enableBevel" onchange="redraw()">
+                                <label class="control-label">Enable Bevel & Emboss</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Bevel Depth</label>
+                            <div class="control-row">
+                                <input type="range" id="bevelDepth" min="1" max="10" value="3" oninput="syncSlider('bevelDepth', this.value)">
+                                <input type="number" class="range-value" id="bevelDepthValue" min="1" max="10" value="3" oninput="syncNumber('bevelDepth', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <h3>🏷️ Banner Settings</h3>
@@ -1017,6 +1097,14 @@
         let bannerColor2 = '#00D1D6';
         let useBannerGradient = true;
         
+        // Blending Options
+        let textStrokeWidth = 12;
+        let shadowBlur = 15;
+        let shadowOffsetX = 5;
+        let shadowOffsetY = 5;
+        let outerGlowIntensity = 20;
+        let bevelDepth = 3;
+        
         let mikuCutout = null;
         let cutoutOpacity = 100;
         let cutoutZoom = 100;
@@ -1138,7 +1226,19 @@
                 const box = boxes.find(b => b.id === boxId);
                 if (box) box.y = parseInt(value);
             }
-            
+            // Blending Options
+            } else if (id === 'textStrokeWidth') {
+                textStrokeWidth = parseInt(value);
+            } else if (id === 'shadowBlur') {
+                shadowBlur = parseInt(value);
+            } else if (id === 'shadowOffsetX') {
+                shadowOffsetX = parseInt(value);
+            } else if (id === 'shadowOffsetY') {
+                shadowOffsetY = parseInt(value);
+            } else if (id === 'outerGlowIntensity') {
+                outerGlowIntensity = parseInt(value);
+            } else if (id === 'bevelDepth') {
+                bevelDepth = parseInt(value);
             redraw();
         }
         
@@ -1766,10 +1866,13 @@
             const mainFont = document.getElementById('mainFont').value;
             const mainSize = document.getElementById('mainTextSize').value;
             
-            ctx.shadowColor = '#000000';
-            ctx.shadowBlur = 15;
-            ctx.shadowOffsetX = 5;
-            ctx.shadowOffsetY = 5;
+            // Drop shadow
+            if (document.getElementById('enableDropShadow').checked) {
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowOffsetX = shadowOffsetX;
+                ctx.shadowOffsetY = shadowOffsetY;
+            }
             
             ctx.font = `bold ${mainSize}px "${mainFont}", Impact`;
             ctx.textAlign = 'center';
@@ -1778,12 +1881,56 @@
             ctx.save();
             ctx.transform(1, 0, -0.15, 1, 0, 0);
             
+            // Outer glow
+            if (document.getElementById('enableOuterGlow').checked) {
+                ctx.shadowColor = primaryColor;
+                ctx.shadowBlur = outerGlowIntensity;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                ctx.strokeStyle = primaryColor;
+                ctx.lineWidth = 2;
+                ctx.strokeText(text, 0, -height/4);
+            }
+            
+            // Bevel & Emboss
+            if (document.getElementById('enableBevel').checked) {
+                // Highlight
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = -bevelDepth;
+                ctx.shadowOffsetY = -bevelDepth;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.strokeText(text, 0, -height/4);
+                
+                // Shadow
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+                ctx.shadowOffsetX = bevelDepth;
+                ctx.shadowOffsetY = bevelDepth;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.strokeText(text, 0, -height/4);
+            }
+            
+            // Reset shadows for main text
+            if (document.getElementById('enableDropShadow').checked) {
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowOffsetX = shadowOffsetX;
+                ctx.shadowOffsetY = shadowOffsetY;
+            } else {
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+            
+            // Main text strokes
             ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 12;
+            ctx.lineWidth = textStrokeWidth;
             ctx.strokeText(text, 0, -height/4);
             
             ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 7;
+            ctx.lineWidth = textStrokeWidth - 5;
             ctx.strokeText(text, 0, -height/4);
             
             ctx.strokeStyle = '#003333';
@@ -1804,13 +1951,68 @@
             
             ctx.restore();
             
+            // Subtitle text
             const subtitleFont = document.getElementById('subtitleFont').value;
             const subtitleSize = document.getElementById('subtitleTextSize').value;
-            ctx.shadowBlur = 10;
+            
+            // Drop shadow for subtitle
+            if (document.getElementById('enableDropShadow').checked) {
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowOffsetX = shadowOffsetX;
+                ctx.shadowOffsetY = shadowOffsetY;
+            }
+            
             ctx.font = `bold ${subtitleSize}px "${subtitleFont}"`;
             
+            // Outer glow for subtitle
+            if (document.getElementById('enableOuterGlow').checked) {
+                ctx.shadowColor = primaryColor;
+                ctx.shadowBlur = outerGlowIntensity;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                ctx.strokeStyle = primaryColor;
+                ctx.lineWidth = 2;
+                ctx.strokeText(subtext, 0, height/4);
+            }
+            
+            // Bevel & Emboss for subtitle
+            if (document.getElementById('enableBevel').checked) {
+                // Highlight
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = -bevelDepth;
+                ctx.shadowOffsetY = -bevelDepth;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.strokeText(subtext, 0, height/4);
+                
+                // Shadow
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+                ctx.shadowOffsetX = bevelDepth;
+                ctx.shadowOffsetY = bevelDepth;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.strokeText(subtext, 0, height/4);
+            }
+            
+            // Reset shadows for subtitle
+            if (document.getElementById('enableDropShadow').checked) {
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowOffsetX = shadowOffsetX;
+                ctx.shadowOffsetY = shadowOffsetY;
+            } else {
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+            
+            // Subtitle strokes (scaled down from main text)
+            const subtitleStrokeWidth = Math.max(2, textStrokeWidth - 6);
+            
             ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 6;
+            ctx.lineWidth = subtitleStrokeWidth;
             ctx.strokeText(subtext, 0, height/4);
             
             ctx.strokeStyle = '#003333';
@@ -2112,6 +2314,7 @@
     </script>
 </body>
 </html>
+
 
 
 
