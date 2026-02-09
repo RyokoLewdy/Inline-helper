@@ -1004,6 +1004,8 @@
         let bannerColor = '#39C5BB';
         let bannerColor2 = '#00D1D6';
         let useBannerGradient = true;
+        let textOutlineColor = '#FF6B9D';
+        let textOutlineThickness = 12;
         
         let mikuCutout = null;
         let cutoutOpacity = 100;
@@ -1612,6 +1614,13 @@
         
         function drawBanner(ctx, x, y, width, height, rotation, text, subtext, shape) {
             ctx.save();
+            if (document.getElementById('useTextItalic').checked) {
+                ctx.transform(1, 0, -0.15, 1, 0, 0);
+            }
+            
+            ctx.strokeStyle = textOutlineColor;
+            ctx.lineWidth = textOutlineThickness;
+            ctx.strokeText(text, 0, -height/4);
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
             
@@ -2034,6 +2043,7 @@
     </script>
 </body>
 </html>
+
 
 
 
