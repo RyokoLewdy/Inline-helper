@@ -824,6 +824,31 @@
                                 <label class="control-label">Show Background Lines</label>
                             </div>
                         </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Custom Background Image</label>
+                            <div class="preview-box" id="preview-background" style="height: 100px;">
+                                <span class="box-marker">BG</span>
+                            </div>
+                            <button class="secondary" onclick="document.getElementById('backgroundUpload').click()">📤 Upload Background</button>
+                            <input type="file" id="backgroundUpload" accept="image/*" onchange="handleBackgroundUpload(event)">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Background Opacity (%)</label>
+                            <div class="control-row">
+                                <input type="range" id="bgOpacity" min="0" max="100" value="100" oninput="syncSlider('bgOpacity', this.value)">
+                                <input type="number" class="range-value" id="bgOpacityValue" min="0" max="100" value="100" oninput="syncNumber('bgOpacity', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Background Blur (px)</label>
+                            <div class="control-row">
+                                <input type="range" id="bgBlur" min="0" max="20" value="0" oninput="syncSlider('bgBlur', this.value)">
+                                <input type="number" class="range-value" id="bgBlurValue" min="0" max="20" value="0" oninput="syncNumber('bgBlur', this.value)">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -981,6 +1006,9 @@
         let cutoutZoom = 100;
         let cutoutOffsetX = 0;
         let cutoutOffsetY = 0;
+        let customBackground = null;
+        let bgOpacity = 100;
+        let bgBlur = 0;
         
         let boxes = [
             { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
@@ -1302,7 +1330,7 @@
         function drawToContext(targetCtx, targetCanvas, scale = 1) {
             targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
             
-            // Temp background - FIXED
+            // Temp background 
             const showTempBg = document.getElementById('showTempBg');
             if (showTempBg && showTempBg.checked) {
                 targetCtx.fillStyle = '#2e2828';
@@ -1313,6 +1341,18 @@
             if (scale !== 1) {
                 targetCtx.save();
                 targetCtx.scale(scale, scale);
+            }
+
+            // Custom background
+            if (customBackground) {
+                targetCtx.save();
+                targetCtx.globalAlpha = bgOpacity / 100;
+                if (bgBlur > 0) {
+                    targetCtx.filter = `blur(${bgBlur}px)`;
+                }
+                targetCtx.drawImage(customBackground, 0, 0, 2100, 1200);
+                targetCtx.filter = 'none';
+                targetCtx.restore();
             }
             
             // Background shapes
@@ -1394,6 +1434,23 @@
             gradient.addColorStop(1, color + '00');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 2100, 1200);
+        }
+
+        function handleBackgroundUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    customBackground = img;
+                    document.getElementById('preview-background').innerHTML = `<img src="${e.target.result}">`;
+                    redraw();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
         
         function drawHexagonPattern(ctx) {
@@ -2005,6 +2062,7 @@
     </script>
 </body>
 </html>
+
 
 
 
