@@ -666,9 +666,6 @@
                     </div>
                 </div>
                 
-              </div>
-                </div>
-                
                 <div class="collapsible-section">
                     <div class="collapsible-header">
                         <h3>✨ Text Blending Options</h3>
@@ -1225,8 +1222,10 @@
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
                 if (box) box.y = parseInt(value);
-            }
-            // Blending Options
+            } else if (id === 'bgOpacity') {
+                bgOpacity = parseInt(value);
+            } else if (id === 'bgBlur') {
+                bgBlur = parseInt(value);
             } else if (id === 'textStrokeWidth') {
                 textStrokeWidth = parseInt(value);
             } else if (id === 'shadowBlur') {
@@ -2314,6 +2313,7 @@
     </script>
 </body>
 </html>
+
 
 
 
