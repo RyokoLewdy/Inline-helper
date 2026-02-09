@@ -618,7 +618,23 @@
                                 <option value="Times New Roman">Times New Roman</option>
                                 <option value="Trebuchet MS">Trebuchet MS</option>
                                 <option value="Verdana">Verdana</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Palatino">Palatino</option>
+                                <option value="Garamond">Garamond</option>
+                                <option value="Bookman">Bookman</option>
+                                <option value="Comic Sans MS">Comic Sans MS</option>
+                                <option value="Candara">Candara</option>
+                                <option value="Arial Narrow">Arial Narrow</option>
+                                <option value="Century Gothic">Century Gothic</option>
+                                <option value="custom">Custom Uploaded Font</option>
                             </select>
+                        </div>
+                        
+                        <div class="control-group" id="customFontUpload" style="display: none;">
+                            <label class="control-label">Upload Custom Font (.ttf, .otf, .woff)</label>
+                            <button class="secondary" onclick="document.getElementById('fontFile').click()">📤 Upload Font File</button>
+                            <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(event)">
+                            <p class="info-text" id="fontFileName">No font uploaded</p>
                         </div>
                         
                         <div class="control-group">
@@ -1354,7 +1370,41 @@
                 targetCtx.filter = 'none';
                 targetCtx.restore();
             }
+
+            // Font upload handling
+        function handleFontUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
             
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fontFace = new FontFace('CustomFont', `url(${e.target.result})`);
+                fontFace.load().then(function(loadedFont) {
+                    document.fonts.add(loadedFont);
+                    document.getElementById('fontFileName').textContent = `Loaded: ${file.name}`;
+                    document.getElementById('mainFont').value = 'CustomFont';
+                    redraw();
+                }).catch(function(error) {
+                    alert('Error loading font: ' + error);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Show/hide custom font upload
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainFontSelect = document.getElementById('mainFont');
+            if (mainFontSelect) {
+                mainFontSelect.addEventListener('change', function() {
+                    const uploadDiv = document.getElementById('customFontUpload');
+                    if (this.value === 'custom') {
+                        uploadDiv.style.display = 'block';
+                    } else {
+                        uploadDiv.style.display = 'none';
+                    }
+                });
+            }
+        });
             // Background shapes
             const bgShapeType = document.getElementById('bgShapeType').value;
             if (bgShapeType === 'circles') {
@@ -2062,6 +2112,7 @@
     </script>
 </body>
 </html>
+
 
 
 
