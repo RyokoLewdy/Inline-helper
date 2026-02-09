@@ -647,35 +647,6 @@
                                 <input type="number" class="range-value" id="subtitleTextSizeValue" min="20" max="80" value="38" oninput="syncNumber('subtitleTextSize', this.value)">
                             </div>
                         </div>
-                
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <h3>✨ Text Blending Options</h3>
-                        <span class="collapsible-icon">▼</span>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="control-group">
-                            <label class="control-label">Text Outline Color</label>
-                            <div class="color-input-group">
-                                <input type="color" id="textOutlineColorPicker" value="#FF6B9D" class="color-picker" oninput="syncColor('textOutlineColor', this.value)">
-                                <input type="text" id="textOutlineColorHex" value="#FF6B9D" class="hex-input" oninput="syncColorFromHex('textOutlineColor', this.value)">
-                            </div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">Text Outline Thickness</label>
-                            <div class="control-row">
-                                <input type="range" id="textOutlineThickness" min="0" max="20" value="12" oninput="syncSlider('textOutlineThickness', this.value)">
-                                <input type="number" class="range-value" id="textOutlineThicknessValue" min="0" max="20" value="12" oninput="syncNumber('textOutlineThickness', this.value)">
-                            </div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="useTextItalic" checked onchange="redraw()">
-                                <label class="control-label">Use Italic Slant</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -1004,8 +975,6 @@
         let bannerColor = '#39C5BB';
         let bannerColor2 = '#00D1D6';
         let useBannerGradient = true;
-        let textOutlineColor = '#FF6B9D';
-        let textOutlineThickness = 12;
         
         let mikuCutout = null;
         let cutoutOpacity = 100;
@@ -1614,13 +1583,6 @@
         
         function drawBanner(ctx, x, y, width, height, rotation, text, subtext, shape) {
             ctx.save();
-            if (document.getElementById('useTextItalic').checked) {
-                ctx.transform(1, 0, -0.15, 1, 0, 0);
-            }
-            
-            ctx.strokeStyle = textOutlineColor;
-            ctx.lineWidth = textOutlineThickness;
-            ctx.strokeText(text, 0, -height/4);
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
             
@@ -2043,11 +2005,6 @@
     </script>
 </body>
 </html>
-
-
-
-
-
 
 
 
