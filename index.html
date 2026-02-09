@@ -748,6 +748,21 @@
                                 <input type="text" id="bannerColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('bannerColor', this.value)">
                             </div>
                         </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Banner Color 2 (Gradient)</label>
+                            <div class="color-input-group">
+                                <input type="color" id="bannerColor2Picker" value="#00D1D6" class="color-picker" oninput="syncColor('bannerColor2', this.value)">
+                                <input type="text" id="bannerColor2Hex" value="#00D1D6" class="hex-input" oninput="syncColorFromHex('bannerColor2', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="useBannerGradient" checked onchange="redraw()">
+                                <label class="control-label">Use Gradient (disable for solid color)</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1100,6 +1115,10 @@
                 bannerColor = value;
                 document.getElementById('bannerColorHex').value = value;
                 document.getElementById('bannerColorPicker').value = value;
+            } else if (type === 'bannerColor2') {
+                bannerColor2 = value;
+                document.getElementById('bannerColor2Hex').value = value;
+                document.getElementById('bannerColor2Picker').value = value;
             }
             redraw();
         }
@@ -1566,12 +1585,17 @@
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
             
-            const gradient = ctx.createLinearGradient(-width/2, 0, width/2, 0);
-            gradient.addColorStop(0, bannerColor);
-            gradient.addColorStop(0.5, '#00D1D6');
-            gradient.addColorStop(1, bannerColor);
+            const useGradient = document.getElementById('useBannerGradient').checked;
             
-            ctx.fillStyle = gradient;
+            if (useGradient) {
+                const gradient = ctx.createLinearGradient(-width/2, 0, width/2, 0);
+                gradient.addColorStop(0, bannerColor);
+                gradient.addColorStop(0.5, bannerColor2);
+                gradient.addColorStop(1, bannerColor);
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = bannerColor;
+            }
             
             if (shape === 'rounded') {
                 const radius = 20;
@@ -1980,6 +2004,7 @@
     </script>
 </body>
 </html>
+
 
 
 
