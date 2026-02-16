@@ -520,8 +520,8 @@
             <p class="subtitle">F-List Inline assistant | 1920x1080 | Dark Mode | Fully Customizable</p>
             <p class="subtitle">Made By Bratty Bitch Miku</p>
             <a href="https://www.f-list.net/c/bratty%20bitch%20miku" target="_blank" style="color: var(--pink); text-decoration: none; font-weight: bold; border: 2px solid var(--pink); padding: 8px 24px; border-radius: 8px; display: inline-block; transition: all 0.3s;">
-                                    🎤 F-chat contact
-                                </a>
+                🎤 F-chat contact
+            </a>
         </div>
     </div>
     
@@ -540,7 +540,7 @@
             </ul>
         </div>
         
-<!-- Content Area -->
+        <!-- Content Area -->
         <div class="content-area">
             <!-- General Settings -->
             <div class="category-section active" id="section-general">
@@ -575,12 +575,12 @@
                     </div>
                     <div class="collapsible-content">
                         <div class="control-group">
-                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration (Does not save images and idk why)</button>
+                            <button onclick="saveConfiguration()" style="width: 100%;">💾 Save Configuration</button>
                             <p class="info-text">Downloads a .json file with all your settings</p>
                         </div>
                         
                         <div class="control-group">
-                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration (does not Load Images and I still dunno why)</button>
+                            <button onclick="document.getElementById('loadConfig').click()" class="secondary" style="width: 100%;">📂 Load Configuration</button>
                             <input type="file" id="loadConfig" accept=".json" onchange="loadConfiguration(event)">
                             <p class="info-text">Upload a previously saved .json file</p>
                         </div>
@@ -612,20 +612,13 @@
                                 <option value="Comic Sans MS">Comic Sans MS (Default)</option>
                                 <option value="Impact">Impact</option>
                                 <option value="Arial Black">Arial Black</option>
-                                <option value="Brush Script MT">Brush Script MT</option>
                                 <option value="Courier New">Courier New</option>
                                 <option value="Georgia">Georgia</option>
                                 <option value="Times New Roman">Times New Roman</option>
                                 <option value="Trebuchet MS">Trebuchet MS</option>
                                 <option value="Verdana">Verdana</option>
+                                <option value="Arial">Arial</option>
                                 <option value="Helvetica">Helvetica</option>
-                                <option value="Palatino">Palatino</option>
-                                <option value="Garamond">Garamond</option>
-                                <option value="Bookman">Bookman</option>
-                                <option value="Comic Sans MS">Comic Sans MS</option>
-                                <option value="Candara">Candara</option>
-                                <option value="Arial Narrow">Arial Narrow</option>
-                                <option value="Century Gothic">Century Gothic</option>
                                 <option value="custom">Custom Uploaded Font</option>
                             </select>
                         </div>
@@ -645,6 +638,11 @@
                                 <option value="Helvetica">Helvetica</option>
                                 <option value="Impact">Impact</option>
                                 <option value="Georgia">Georgia</option>
+                                <option value="Comic Sans MS">Comic Sans MS</option>
+                                <option value="Arial Black">Arial Black</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Verdana">Verdana</option>
                             </select>
                         </div>
                         
@@ -806,6 +804,21 @@
                                 <label class="control-label">Show Sparkles</label>
                             </div>
                         </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Banner Opacity (%)</label>
+                            <div class="control-row">
+                                <input type="range" id="bannerOpacity" min="0" max="100" value="100" oninput="syncSlider('bannerOpacity', this.value)">
+                                <input type="number" class="range-value" id="bannerOpacityValue" min="0" max="100" value="100" oninput="syncNumber('bannerOpacity', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showBanner" checked onchange="redraw()">
+                                <label class="control-label">Show Banner</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -854,6 +867,77 @@
                             <div class="checkbox-group">
                                 <input type="checkbox" id="useBannerGradient" checked onchange="redraw()">
                                 <label class="control-label">Use Gradient (disable for solid color)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🖼️ Box Border Settings</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showBoxBorders" checked onchange="redraw()">
+                                <label class="control-label">Show Box Borders</label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Box Border Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="boxBorderColorPicker" value="#FF6B9D" class="color-picker" oninput="syncColor('boxBorderColor', this.value)">
+                                <input type="text" id="boxBorderColorHex" value="#FF6B9D" class="hex-input" oninput="syncColorFromHex('boxBorderColor', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Border Width</label>
+                            <div class="control-row">
+                                <input type="range" id="boxBorderWidth" min="0" max="20" value="4" oninput="syncSlider('boxBorderWidth', this.value)">
+                                <input type="number" class="range-value" id="boxBorderWidthValue" min="0" max="20" value="4" oninput="syncNumber('boxBorderWidth', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header">
+                        <h3>🖼️ Canvas Frame Border</h3>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showCanvasBorder" onchange="redraw()">
+                                <label class="control-label">Show Canvas Border Frame</label>
+                            </div>
+                            <p class="info-text">Adds a rounded rectangle border around the entire image</p>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Canvas Border Color</label>
+                            <div class="color-input-group">
+                                <input type="color" id="canvasBorderColorPicker" value="#39C5BB" class="color-picker" oninput="syncColor('canvasBorderColor', this.value)">
+                                <input type="text" id="canvasBorderColorHex" value="#39C5BB" class="hex-input" oninput="syncColorFromHex('canvasBorderColor', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Canvas Border Width</label>
+                            <div class="control-row">
+                                <input type="range" id="canvasBorderWidth" min="2" max="40" value="10" oninput="syncSlider('canvasBorderWidth', this.value)">
+                                <input type="number" class="range-value" id="canvasBorderWidthValue" min="2" max="40" value="10" oninput="syncNumber('canvasBorderWidth', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Corner Radius</label>
+                            <div class="control-row">
+                                <input type="range" id="canvasBorderRadius" min="0" max="100" value="30" oninput="syncSlider('canvasBorderRadius', this.value)">
+                                <input type="number" class="range-value" id="canvasBorderRadiusValue" min="0" max="100" value="30" oninput="syncNumber('canvasBorderRadius', this.value)">
                             </div>
                         </div>
                     </div>
@@ -911,7 +995,7 @@
                             </select>
                         </div>
                         
-                    <div class="control-group">
+                        <div class="control-group">
                             <div class="checkbox-group">
                                 <input type="checkbox" id="showBackgroundLines" checked onchange="redraw()">
                                 <label class="control-label">Show Background Lines</label>
@@ -963,6 +1047,22 @@
                         </div>
                         
                         <div class="grid-2">
+                            <div class="control-group">
+                                <label class="control-label">Position X</label>
+                                <div class="control-row">
+                                    <input type="range" id="cutoutPosX" min="100" max="1820" value="380" oninput="syncSlider('cutoutPosX', this.value)">
+                                    <input type="number" class="range-value" id="cutoutPosXValue" min="100" max="1820" value="380" oninput="syncNumber('cutoutPosX', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Position Y</label>
+                                <div class="control-row">
+                                    <input type="range" id="cutoutPosY" min="100" max="980" value="600" oninput="syncSlider('cutoutPosY', this.value)">
+                                    <input type="number" class="range-value" id="cutoutPosYValue" min="100" max="980" value="600" oninput="syncNumber('cutoutPosY', this.value)">
+                                </div>
+                            </div>
+                            
                             <div class="control-group">
                                 <label class="control-label">Opacity (%)</label>
                                 <div class="control-row">
@@ -1093,6 +1193,18 @@
         let bannerColor = '#39C5BB';
         let bannerColor2 = '#00D1D6';
         let useBannerGradient = true;
+        let bannerOpacity = 100;
+        
+        // Box border settings
+        let showBoxBorders = true;
+        let boxBorderColor = '#FF6B9D';
+        let boxBorderWidth = 4;
+        
+        // Canvas border settings
+        let showCanvasBorder = false;
+        let canvasBorderColor = '#39C5BB';
+        let canvasBorderWidth = 10;
+        let canvasBorderRadius = 30;
         
         // Blending Options
         let textStrokeWidth = 12;
@@ -1107,14 +1219,16 @@
         let cutoutZoom = 100;
         let cutoutOffsetX = 0;
         let cutoutOffsetY = 0;
+        let cutoutPosX = 380;
+        let cutoutPosY = 600;
         let customBackground = null;
         let bgOpacity = 100;
         let bgBlur = 0;
         
         let boxes = [
-            { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-            { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-            { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+            { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+            { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+            { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
         ];
         
         let nextBoxId = 4;
@@ -1125,9 +1239,22 @@
             initializeCollapsibles();
             generateBoxControls();
             redraw();
+            
+            // Setup custom font upload toggle
+            const mainFontSelect = document.getElementById('mainFont');
+            if (mainFontSelect) {
+                mainFontSelect.addEventListener('change', function() {
+                    const uploadDiv = document.getElementById('customFontUpload');
+                    if (this.value === 'custom') {
+                        uploadDiv.style.display = 'block';
+                    } else {
+                        uploadDiv.style.display = 'none';
+                    }
+                });
+            }
         });
         
-        // Sidebar navigation - FIXED
+        // Sidebar navigation
         function initializeSidebar() {
             const navButtons = document.querySelectorAll('.nav-btn');
             const sections = document.querySelectorAll('.category-section');
@@ -1136,14 +1263,11 @@
                 btn.addEventListener('click', () => {
                     const category = btn.dataset.category;
                     
-                    // Remove active class from all buttons
                     navButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     
-                    // Hide all sections
                     sections.forEach(s => s.classList.remove('active'));
                     
-                    // Show selected section
                     const targetSection = document.getElementById(`section-${category}`);
                     if (targetSection) {
                         targetSection.classList.add('active');
@@ -1152,7 +1276,7 @@
             });
         }
         
-        // Collapsible sections - FIXED
+        // Collapsible sections
         function initializeCollapsibles() {
             document.querySelectorAll('.collapsible-header').forEach(header => {
                 header.addEventListener('click', () => {
@@ -1214,6 +1338,10 @@
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
                 if (box) box.rotation = parseInt(value);
+            } else if (id.includes('imageRotation-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.imageRotation = parseInt(value);
             } else if (id.includes('posX-')) {
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
@@ -1222,6 +1350,10 @@
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
                 if (box) box.y = parseInt(value);
+            } else if (id === 'cutoutPosX') {
+                cutoutPosX = parseInt(value);
+            } else if (id === 'cutoutPosY') {
+                cutoutPosY = parseInt(value);
             } else if (id === 'bgOpacity') {
                 bgOpacity = parseInt(value);
             } else if (id === 'bgBlur') {
@@ -1238,6 +1370,14 @@
                 outerGlowIntensity = parseInt(value);
             } else if (id === 'bevelDepth') {
                 bevelDepth = parseInt(value);
+            } else if (id === 'bannerOpacity') {
+                bannerOpacity = parseInt(value);
+            } else if (id === 'boxBorderWidth') {
+                boxBorderWidth = parseInt(value);
+            } else if (id === 'canvasBorderWidth') {
+                canvasBorderWidth = parseInt(value);
+            } else if (id === 'canvasBorderRadius') {
+                canvasBorderRadius = parseInt(value);
             }
             
             redraw();
@@ -1265,6 +1405,14 @@
                 bannerColor2 = value;
                 document.getElementById('bannerColor2Hex').value = value;
                 document.getElementById('bannerColor2Picker').value = value;
+            } else if (type === 'boxBorderColor') {
+                boxBorderColor = value;
+                document.getElementById('boxBorderColorHex').value = value;
+                document.getElementById('boxBorderColorPicker').value = value;
+            } else if (type === 'canvasBorderColor') {
+                canvasBorderColor = value;
+                document.getElementById('canvasBorderColorHex').value = value;
+                document.getElementById('canvasBorderColorPicker').value = value;
             }
             redraw();
         }
@@ -1298,7 +1446,7 @@
                         
                         <div class="grid-2">
                             <div class="control-group">
-                                <label class="control-label">Position X</label>
+                                <label class="control-label">Box Position X</label>
                                 <div class="control-row">
                                     <input type="range" id="posX-${box.id}" min="100" max="1820" value="${box.x}" oninput="syncSlider('posX-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="posX-${box.id}Value" min="100" max="1820" value="${box.x}" oninput="syncNumber('posX-${box.id}', this.value)">
@@ -1306,7 +1454,7 @@
                             </div>
                             
                             <div class="control-group">
-                                <label class="control-label">Position Y</label>
+                                <label class="control-label">Box Position Y</label>
                                 <div class="control-row">
                                     <input type="range" id="posY-${box.id}" min="100" max="980" value="${box.y}" oninput="syncSlider('posY-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="posY-${box.id}Value" min="100" max="980" value="${box.y}" oninput="syncNumber('posY-${box.id}', this.value)">
@@ -1314,7 +1462,7 @@
                             </div>
                             
                             <div class="control-group">
-                                <label class="control-label">Size</label>
+                                <label class="control-label">Box Size</label>
                                 <div class="control-row">
                                     <input type="range" id="size-${box.id}" min="100" max="500" value="${box.size}" oninput="syncSlider('size-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="size-${box.id}Value" min="100" max="500" value="${box.size}" oninput="syncNumber('size-${box.id}', this.value)">
@@ -1322,10 +1470,18 @@
                             </div>
                             
                             <div class="control-group">
-                                <label class="control-label">Rotation (degrees)</label>
+                                <label class="control-label">Box Rotation (degrees)</label>
                                 <div class="control-row">
                                     <input type="range" id="rotation-${box.id}" min="-180" max="180" value="${box.rotation}" oninput="syncSlider('rotation-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="rotation-${box.id}Value" min="-180" max="180" value="${box.rotation}" oninput="syncNumber('rotation-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Image Rotation (degrees)</label>
+                                <div class="control-row">
+                                    <input type="range" id="imageRotation-${box.id}" min="-180" max="180" value="${box.imageRotation || 0}" oninput="syncSlider('imageRotation-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="imageRotation-${box.id}Value" min="-180" max="180" value="${box.imageRotation || 0}" oninput="syncNumber('imageRotation-${box.id}', this.value)">
                                 </div>
                             </div>
                             
@@ -1388,7 +1544,8 @@
                 opacity: 100,
                 zoom: 100,
                 offsetX: 0,
-                offsetY: 0
+                offsetY: 0,
+                imageRotation: 0
             };
             boxes.push(newBox);
             generateBoxControls();
@@ -1401,6 +1558,26 @@
             boxes = boxes.filter(b => b.id !== id);
             generateBoxControls();
             redraw();
+        }
+        
+        // Font upload handling
+        function handleFontUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fontFace = new FontFace('CustomFont', `url(${e.target.result})`);
+                fontFace.load().then(function(loadedFont) {
+                    document.fonts.add(loadedFont);
+                    document.getElementById('fontFileName').textContent = `Loaded: ${file.name}`;
+                    document.getElementById('mainFont').value = 'custom';
+                    redraw();
+                }).catch(function(error) {
+                    alert('Error loading font: ' + error);
+                });
+            };
+            reader.readAsDataURL(file);
         }
         
         // Image uploads
@@ -1443,6 +1620,23 @@
             reader.readAsDataURL(file);
         }
         
+        function handleBackgroundUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    customBackground = img;
+                    document.getElementById('preview-background').innerHTML = `<img src="${e.target.result}">`;
+                    redraw();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
         // Drawing functions
         function drawToContext(targetCtx, targetCanvas, scale = 1) {
             targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
@@ -1472,40 +1666,6 @@
                 targetCtx.restore();
             }
 
-            // Font upload handling
-        function handleFontUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const fontFace = new FontFace('CustomFont', `url(${e.target.result})`);
-                fontFace.load().then(function(loadedFont) {
-                    document.fonts.add(loadedFont);
-                    document.getElementById('fontFileName').textContent = `Loaded: ${file.name}`;
-                    document.getElementById('mainFont').value = 'CustomFont';
-                    redraw();
-                }).catch(function(error) {
-                    alert('Error loading font: ' + error);
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // Show/hide custom font upload
-        document.addEventListener('DOMContentLoaded', function() {
-            const mainFontSelect = document.getElementById('mainFont');
-            if (mainFontSelect) {
-                mainFontSelect.addEventListener('change', function() {
-                    const uploadDiv = document.getElementById('customFontUpload');
-                    if (this.value === 'custom') {
-                        uploadDiv.style.display = 'block';
-                    } else {
-                        uploadDiv.style.display = 'none';
-                    }
-                });
-            }
-        });
             // Background shapes
             const bgShapeType = document.getElementById('bgShapeType').value;
             if (bgShapeType === 'circles') {
@@ -1539,7 +1699,7 @@
                 drawSymbol(targetCtx, 400, 720, 36, 0, symbol);
             }
             
-            // Glowing lines - controlled by checkbox
+            // Glowing lines
             const showLines = document.getElementById('showBackgroundLines');
             if (showLines && showLines.checked) {
                 drawGlowingLine(targetCtx, 400, 300, 1700, 400, primaryColor, 2);
@@ -1549,10 +1709,25 @@
             
             // Main cutout
             if (mikuCutout) {
-                drawCutout(targetCtx, mikuCutout, 380, 600, 900, cutoutOpacity / 100, cutoutZoom / 100, cutoutOffsetX, cutoutOffsetY);
+                drawCutout(targetCtx, mikuCutout, cutoutPosX, cutoutPosY, 900, cutoutOpacity / 100, cutoutZoom / 100, cutoutOffsetX, cutoutOffsetY);
+            }
+            
+            // Banner
+            if (document.getElementById('showBanner').checked) {
+                const bannerX = parseInt(document.getElementById('bannerX').value);
+                const bannerY = parseInt(document.getElementById('bannerY').value);
+                const bannerWidth = parseInt(document.getElementById('bannerWidth').value);
+                const bannerHeight = parseInt(document.getElementById('bannerHeight').value);
+                const bannerRotation = parseInt(document.getElementById('bannerRotation').value);
+                const bannerShape = document.getElementById('bannerShape').value;
+                const mainText = document.getElementById('mainText').value || 'Miku';
+                const subtitleText = document.getElementById('subtitleText').value || 'Hatsune';
+                
+                drawBanner(targetCtx, bannerX, bannerY, bannerWidth, bannerHeight, bannerRotation, mainText, subtitleText, bannerShape);
             }
             
             // Boxes
+            showBoxBorders = document.getElementById('showBoxBorders').checked;
             boxes.forEach(box => {
                 if (box.image) {
                     drawImageInBox(targetCtx, box);
@@ -1561,17 +1736,10 @@
                 }
             });
             
-            // Banner
-            const bannerX = parseInt(document.getElementById('bannerX').value);
-            const bannerY = parseInt(document.getElementById('bannerY').value);
-            const bannerWidth = parseInt(document.getElementById('bannerWidth').value);
-            const bannerHeight = parseInt(document.getElementById('bannerHeight').value);
-            const bannerRotation = parseInt(document.getElementById('bannerRotation').value);
-            const bannerShape = document.getElementById('bannerShape').value;
-            const mainText = document.getElementById('mainText').value || 'Miku';
-            const subtitleText = document.getElementById('subtitleText').value || 'Hatsune';
-            
-            drawBanner(targetCtx, bannerX, bannerY, bannerWidth, bannerHeight, bannerRotation, mainText, subtitleText, bannerShape);
+            // Canvas Border Frame (drawn last so it's on top of everything)
+            if (document.getElementById('showCanvasBorder').checked) {
+                drawCanvasBorder(targetCtx);
+            }
             
             if (scale !== 1) {
                 targetCtx.restore();
@@ -1586,31 +1754,19 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 2100, 1200);
         }
-
-        function handleBackgroundUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    customBackground = img;
-                    document.getElementById('preview-background').innerHTML = `<img src="${e.target.result}">`;
-                    redraw();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
         
         function drawHexagonPattern(ctx) {
-            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
-            ctx.lineWidth = 2;
             for (let i = 0; i < 10; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 100 + 50;
+                
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, primaryColor + '66');
+                gradient.addColorStop(0.5, accentColor + '33');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                
                 drawHexagon(ctx, x, y, size);
             }
         }
@@ -1625,15 +1781,21 @@
                 else ctx.lineTo(px, py);
             }
             ctx.closePath();
-            ctx.stroke();
+            ctx.fill();
         }
         
         function drawStarPattern(ctx) {
-            ctx.fillStyle = 'rgba(255, 107, 157, 0.3)';
             for (let i = 0; i < 20; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 15 + 5;
+                
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
+                gradient.addColorStop(0, accentColor + '66');
+                gradient.addColorStop(0.5, primaryColor + '33');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                
                 drawStar(ctx, x, y, 5, size, size / 2);
             }
         }
@@ -1661,16 +1823,21 @@
         }
         
         function drawDiamondPattern(ctx) {
-            ctx.strokeStyle = 'rgba(57, 197, 187, 0.2)';
-            ctx.lineWidth = 2;
             for (let i = 0; i < 15; i++) {
                 const x = Math.random() * 2100;
                 const y = Math.random() * 1200;
                 const size = Math.random() * 60 + 30;
+                
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, primaryColor + '66');
+                gradient.addColorStop(0.5, accentColor + '33');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(45 * Math.PI / 180);
-                ctx.strokeRect(-size/2, -size/2, size, size);
+                ctx.fillRect(-size/2, -size/2, size, size);
                 ctx.restore();
             }
         }
@@ -1738,6 +1905,9 @@
             ctx.closePath();
             ctx.clip();
             
+            // Rotate image inside box
+            ctx.rotate((box.imageRotation || 0) * Math.PI / 180);
+            
             const zoom = box.zoom / 100;
             const scale = Math.max(box.size * 2 / box.image.width, box.size * 2 / box.image.height) * zoom;
             const scaledWidth = box.image.width * scale;
@@ -1747,19 +1917,21 @@
             ctx.restore();
             
             // Border
-            ctx.save();
-            ctx.translate(box.x, box.y);
-            ctx.rotate(box.rotation * Math.PI / 180);
-            ctx.beginPath();
-            ctx.moveTo(0, -box.size);
-            ctx.lineTo(box.size, 0);
-            ctx.lineTo(0, box.size);
-            ctx.lineTo(-box.size, 0);
-            ctx.closePath();
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 4;
-            ctx.stroke();
-            ctx.restore();
+            if (showBoxBorders) {
+                ctx.save();
+                ctx.translate(box.x, box.y);
+                ctx.rotate(box.rotation * Math.PI / 180);
+                ctx.beginPath();
+                ctx.moveTo(0, -box.size);
+                ctx.lineTo(box.size, 0);
+                ctx.lineTo(0, box.size);
+                ctx.lineTo(-box.size, 0);
+                ctx.closePath();
+                ctx.strokeStyle = boxBorderColor;
+                ctx.lineWidth = boxBorderWidth;
+                ctx.stroke();
+                ctx.restore();
+            }
         }
         
         function drawEmptyBox(ctx, box) {
@@ -1772,9 +1944,12 @@
             ctx.lineTo(0, box.size);
             ctx.lineTo(-box.size, 0);
             ctx.closePath();
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 4;
-            ctx.stroke();
+            
+            if (showBoxBorders) {
+                ctx.strokeStyle = boxBorderColor;
+                ctx.lineWidth = boxBorderWidth;
+                ctx.stroke();
+            }
             
             // Show marker if enabled
             if (document.getElementById('showBoxMarkers').checked) {
@@ -1791,6 +1966,7 @@
         
         function drawBanner(ctx, x, y, width, height, rotation, text, subtext, shape) {
             ctx.save();
+            ctx.globalAlpha = bannerOpacity / 100;
             ctx.translate(x, y);
             ctx.rotate(rotation * Math.PI / 180);
             
@@ -1806,62 +1982,84 @@
                 ctx.fillStyle = bannerColor;
             }
             
-            if (shape === 'rounded') {
-                const radius = 20;
-                ctx.beginPath();
-                ctx.moveTo(-width/2 + radius + 20, -height/2);
-                ctx.lineTo(width/2 - radius, -height/2);
-                ctx.arcTo(width/2, -height/2, width/2, -height/2 + radius, radius);
-                ctx.lineTo(width/2 - 20, height/2 - radius);
-                ctx.arcTo(width/2 - 20, height/2, width/2 - 20 - radius, height/2, radius);
-                ctx.lineTo(-width/2 + radius, height/2);
-                ctx.arcTo(-width/2, height/2, -width/2, height/2 - radius, radius);
-                ctx.lineTo(-width/2 + 20, -height/2 + radius);
-                ctx.arcTo(-width/2 + 20, -height/2, -width/2 + 20 + radius, -height/2, radius);
-                ctx.closePath();
-            } else if (shape === 'rectangle') {
+            // Handle rectangle separately to avoid path issues
+            if (shape === 'rectangle') {
+                // Fill
                 ctx.fillRect(-width/2, -height/2, width, height);
-            } else if (shape === 'hexagon') {
-                const w = width / 2;
-                const h = height / 2;
-                ctx.beginPath();
-                ctx.moveTo(-w * 0.7, -h);
-                ctx.lineTo(w * 0.7, -h);
-                ctx.lineTo(w, 0);
-                ctx.lineTo(w * 0.7, h);
-                ctx.lineTo(-w * 0.7, h);
-                ctx.lineTo(-w, 0);
-                ctx.closePath();
-            } else if (shape === 'ellipse') {
-                ctx.beginPath();
-                ctx.ellipse(0, 0, width/2, height/2, 0, 0, Math.PI * 2);
-            } else if (shape === 'diamond') {
-                ctx.beginPath();
-                ctx.moveTo(0, -height/2);
-                ctx.lineTo(width/2, 0);
-                ctx.lineTo(0, height/2);
-                ctx.lineTo(-width/2, 0);
-                ctx.closePath();
+                
+                // Glow
+                ctx.shadowColor = bannerColor;
+                ctx.shadowBlur = 25;
+                ctx.fillRect(-width/2, -height/2, width, height);
+                ctx.shadowBlur = 0;
+                
+                // Border
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(-width/2, -height/2, width, height);
+                
+                ctx.strokeStyle = accentColor;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = (bannerOpacity / 100) * 0.6;
+                ctx.strokeRect(-width/2, -height/2, width, height);
+                ctx.globalAlpha = bannerOpacity / 100;
+            } else {
+                // Path-based shapes
+                if (shape === 'rounded') {
+                    const radius = 20;
+                    ctx.beginPath();
+                    ctx.moveTo(-width/2 + radius + 20, -height/2);
+                    ctx.lineTo(width/2 - radius, -height/2);
+                    ctx.arcTo(width/2, -height/2, width/2, -height/2 + radius, radius);
+                    ctx.lineTo(width/2 - 20, height/2 - radius);
+                    ctx.arcTo(width/2 - 20, height/2, width/2 - 20 - radius, height/2, radius);
+                    ctx.lineTo(-width/2 + radius, height/2);
+                    ctx.arcTo(-width/2, height/2, -width/2, height/2 - radius, radius);
+                    ctx.lineTo(-width/2 + 20, -height/2 + radius);
+                    ctx.arcTo(-width/2 + 20, -height/2, -width/2 + 20 + radius, -height/2, radius);
+                    ctx.closePath();
+                } else if (shape === 'hexagon') {
+                    const w = width / 2;
+                    const h = height / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(-w * 0.7, -h);
+                    ctx.lineTo(w * 0.7, -h);
+                    ctx.lineTo(w, 0);
+                    ctx.lineTo(w * 0.7, h);
+                    ctx.lineTo(-w * 0.7, h);
+                    ctx.lineTo(-w, 0);
+                    ctx.closePath();
+                } else if (shape === 'ellipse') {
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, width/2, height/2, 0, 0, Math.PI * 2);
+                } else if (shape === 'diamond') {
+                    ctx.beginPath();
+                    ctx.moveTo(0, -height/2);
+                    ctx.lineTo(width/2, 0);
+                    ctx.lineTo(0, height/2);
+                    ctx.lineTo(-width/2, 0);
+                    ctx.closePath();
+                }
+                
+                ctx.fill();
+                
+                // Glow
+                ctx.shadowColor = bannerColor;
+                ctx.shadowBlur = 25;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                // Border
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                
+                ctx.strokeStyle = accentColor;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = (bannerOpacity / 100) * 0.6;
+                ctx.stroke();
+                ctx.globalAlpha = bannerOpacity / 100;
             }
-            
-            ctx.fill();
-            
-            // Glow
-            ctx.shadowColor = bannerColor;
-            ctx.shadowBlur = 25;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            
-            // Border
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-            
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 2;
-            ctx.globalAlpha = 0.6;
-            ctx.stroke();
-            ctx.globalAlpha = 1.0;
             
             // Text
             const mainFont = document.getElementById('mainFont').value;
@@ -1895,7 +2093,6 @@
             
             // Bevel & Emboss
             if (document.getElementById('enableBevel').checked) {
-                // Highlight
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
                 ctx.shadowBlur = 0;
                 ctx.shadowOffsetX = -bevelDepth;
@@ -1904,7 +2101,6 @@
                 ctx.lineWidth = 2;
                 ctx.strokeText(text, 0, -height/4);
                 
-                // Shadow
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
                 ctx.shadowOffsetX = bevelDepth;
                 ctx.shadowOffsetY = bevelDepth;
@@ -1942,13 +2138,13 @@
             ctx.fillText(text, 0, -height/4);
             
             ctx.shadowBlur = 0;
-            ctx.globalAlpha = 0.5;
+            ctx.globalAlpha = (bannerOpacity / 100) * 0.5;
             const highlightGradient = ctx.createLinearGradient(0, -mainSize, 0, 0);
             highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
             highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
             ctx.fillStyle = highlightGradient;
             ctx.fillText(text, 0, -height/4);
-            ctx.globalAlpha = 1.0;
+            ctx.globalAlpha = bannerOpacity / 100;
             
             ctx.restore();
             
@@ -1956,7 +2152,6 @@
             const subtitleFont = document.getElementById('subtitleFont').value;
             const subtitleSize = document.getElementById('subtitleTextSize').value;
             
-            // Drop shadow for subtitle
             if (document.getElementById('enableDropShadow').checked) {
                 ctx.shadowColor = '#000000';
                 ctx.shadowBlur = shadowBlur;
@@ -1966,7 +2161,6 @@
             
             ctx.font = `bold ${subtitleSize}px "${subtitleFont}"`;
             
-            // Outer glow for subtitle
             if (document.getElementById('enableOuterGlow').checked) {
                 ctx.shadowColor = primaryColor;
                 ctx.shadowBlur = outerGlowIntensity;
@@ -1977,9 +2171,7 @@
                 ctx.strokeText(subtext, 0, height/4);
             }
             
-            // Bevel & Emboss for subtitle
             if (document.getElementById('enableBevel').checked) {
-                // Highlight
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
                 ctx.shadowBlur = 0;
                 ctx.shadowOffsetX = -bevelDepth;
@@ -1988,7 +2180,6 @@
                 ctx.lineWidth = 2;
                 ctx.strokeText(subtext, 0, height/4);
                 
-                // Shadow
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
                 ctx.shadowOffsetX = bevelDepth;
                 ctx.shadowOffsetY = bevelDepth;
@@ -1996,7 +2187,6 @@
                 ctx.strokeText(subtext, 0, height/4);
             }
             
-            // Reset shadows for subtitle
             if (document.getElementById('enableDropShadow').checked) {
                 ctx.shadowColor = '#000000';
                 ctx.shadowBlur = shadowBlur;
@@ -2009,7 +2199,6 @@
                 ctx.shadowOffsetY = 0;
             }
             
-            // Subtitle strokes (scaled down from main text)
             const subtitleStrokeWidth = Math.max(2, textStrokeWidth - 6);
             
             ctx.strokeStyle = primaryColor;
@@ -2071,6 +2260,40 @@
             ctx.restore();
         }
         
+        function drawCanvasBorder(ctx) {
+            ctx.save();
+            
+            const borderWidth = canvasBorderWidth;
+            const radius = canvasBorderRadius;
+            
+            // Draw rounded rectangle border around entire canvas
+            ctx.strokeStyle = canvasBorderColor;
+            ctx.lineWidth = borderWidth;
+            ctx.shadowColor = canvasBorderColor;
+            ctx.shadowBlur = 20;
+            
+            const x = borderWidth / 2;
+            const y = borderWidth / 2;
+            const width = 1920 - borderWidth;
+            const height = 1080 - borderWidth;
+            
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.arcTo(x + width, y, x + width, y + radius, radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+            ctx.lineTo(x + radius, y + height);
+            ctx.arcTo(x, y + height, x, y + height - radius, radius);
+            ctx.lineTo(x, y + radius);
+            ctx.arcTo(x, y, x + radius, y, radius);
+            ctx.closePath();
+            
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
         function redraw() {
             drawToContext(ctx, canvas, canvas.width / 1920);
         }
@@ -2110,7 +2333,7 @@
             link.click();
         }
         
-        // Save/Load - COMPLETE VERSION
+        // Save/Load Configuration
         function saveConfiguration() {
             const config = {
                 settings: {
@@ -2127,15 +2350,38 @@
                     bannerHeight: document.getElementById('bannerHeight').value,
                     bannerRotation: document.getElementById('bannerRotation').value,
                     showSparkles: document.getElementById('showSparkles').checked,
+                    bannerOpacity: bannerOpacity,
+                    showBanner: document.getElementById('showBanner').checked,
                     primaryColor: primaryColor,
                     accentColor: accentColor,
                     bannerColor: bannerColor,
+                    bannerColor2: bannerColor2,
+                    useBannerGradient: document.getElementById('useBannerGradient').checked,
+                    showBoxBorders: document.getElementById('showBoxBorders').checked,
+                    boxBorderColor: boxBorderColor,
+                    boxBorderWidth: boxBorderWidth,
+                    showCanvasBorder: document.getElementById('showCanvasBorder').checked,
+                    canvasBorderColor: canvasBorderColor,
+                    canvasBorderWidth: canvasBorderWidth,
+                    canvasBorderRadius: canvasBorderRadius,
                     bgShapeType: document.getElementById('bgShapeType').value,
                     showDigitalCode: document.getElementById('showDigitalCode').checked,
                     digitalCodeText: document.getElementById('digitalCodeText').value,
                     showMusicNotes: document.getElementById('showMusicNotes').checked,
                     musicNoteSymbol: document.getElementById('musicNoteSymbol').value,
-                    showBoxMarkers: document.getElementById('showBoxMarkers').checked
+                    showBackgroundLines: document.getElementById('showBackgroundLines').checked,
+                    bgOpacity: bgOpacity,
+                    bgBlur: bgBlur,
+                    showBoxMarkers: document.getElementById('showBoxMarkers').checked,
+                    textStrokeWidth: textStrokeWidth,
+                    shadowBlur: shadowBlur,
+                    shadowOffsetX: shadowOffsetX,
+                    shadowOffsetY: shadowOffsetY,
+                    outerGlowIntensity: outerGlowIntensity,
+                    bevelDepth: bevelDepth,
+                    enableDropShadow: document.getElementById('enableDropShadow').checked,
+                    enableOuterGlow: document.getElementById('enableOuterGlow').checked,
+                    enableBevel: document.getElementById('enableBevel').checked
                 },
                 boxes: boxes.map(b => ({
                     id: b.id,
@@ -2147,13 +2393,16 @@
                     opacity: b.opacity,
                     zoom: b.zoom,
                     offsetX: b.offsetX,
-                    offsetY: b.offsetY
+                    offsetY: b.offsetY,
+                    imageRotation: b.imageRotation || 0
                 })),
                 cutout: {
                     opacity: cutoutOpacity,
                     zoom: cutoutZoom,
                     offsetX: cutoutOffsetX,
-                    offsetY: cutoutOffsetY
+                    offsetY: cutoutOffsetY,
+                    posX: cutoutPosX,
+                    posY: cutoutPosY
                 }
             };
             
@@ -2173,8 +2422,8 @@
                 try {
                     const config = JSON.parse(e.target.result);
                     
-                    // Apply settings
                     if (config.settings) {
+                        // Text settings
                         document.getElementById('mainText').value = config.settings.mainText || 'Miku';
                         document.getElementById('subtitleText').value = config.settings.subtitleText || 'Hatsune';
                         document.getElementById('mainFont').value = config.settings.mainFont || 'Comic Sans MS';
@@ -2183,6 +2432,8 @@
                         document.getElementById('mainTextSizeValue').value = config.settings.mainTextSize || 85;
                         document.getElementById('subtitleTextSize').value = config.settings.subtitleTextSize || 38;
                         document.getElementById('subtitleTextSizeValue').value = config.settings.subtitleTextSize || 38;
+                        
+                        // Banner settings
                         document.getElementById('bannerShape').value = config.settings.bannerShape || 'rounded';
                         document.getElementById('bannerX').value = config.settings.bannerX || 1050;
                         document.getElementById('bannerXValue').value = config.settings.bannerX || 1050;
@@ -2195,35 +2446,93 @@
                         document.getElementById('bannerRotation').value = config.settings.bannerRotation || -3;
                         document.getElementById('bannerRotationValue').value = config.settings.bannerRotation || -3;
                         document.getElementById('showSparkles').checked = config.settings.showSparkles !== false;
-                        document.getElementById('bgShapeType').value = config.settings.bgShapeType || 'circles';
-                        document.getElementById('showDigitalCode').checked = config.settings.showDigitalCode !== false;
-                        document.getElementById('digitalCodeText').value = config.settings.digitalCodeText || '01';
-                        document.getElementById('showMusicNotes').checked = config.settings.showMusicNotes !== false;
-                        document.getElementById('musicNoteSymbol').value = config.settings.musicNoteSymbol || '♪';
-                        document.getElementById('showBoxMarkers').checked = config.settings.showBoxMarkers !== false;
+                        bannerOpacity = config.settings.bannerOpacity || 100;
+                        document.getElementById('bannerOpacity').value = bannerOpacity;
+                        document.getElementById('bannerOpacityValue').value = bannerOpacity;
+                        document.getElementById('showBanner').checked = config.settings.showBanner !== false;
                         
                         // Colors
                         if (config.settings.primaryColor) syncColor('primaryColor', config.settings.primaryColor);
                         if (config.settings.accentColor) syncColor('accentColor', config.settings.accentColor);
                         if (config.settings.bannerColor) syncColor('bannerColor', config.settings.bannerColor);
+                        if (config.settings.bannerColor2) syncColor('bannerColor2', config.settings.bannerColor2);
+                        document.getElementById('useBannerGradient').checked = config.settings.useBannerGradient !== false;
+                        
+                        // Box border settings
+                        document.getElementById('showBoxBorders').checked = config.settings.showBoxBorders !== false;
+                        if (config.settings.boxBorderColor) syncColor('boxBorderColor', config.settings.boxBorderColor);
+                        boxBorderWidth = config.settings.boxBorderWidth || 4;
+                        document.getElementById('boxBorderWidth').value = boxBorderWidth;
+                        document.getElementById('boxBorderWidthValue').value = boxBorderWidth;
+                        
+                        // Canvas border settings
+                        document.getElementById('showCanvasBorder').checked = config.settings.showCanvasBorder || false;
+                        if (config.settings.canvasBorderColor) syncColor('canvasBorderColor', config.settings.canvasBorderColor);
+                        canvasBorderWidth = config.settings.canvasBorderWidth || 10;
+                        document.getElementById('canvasBorderWidth').value = canvasBorderWidth;
+                        document.getElementById('canvasBorderWidthValue').value = canvasBorderWidth;
+                        canvasBorderRadius = config.settings.canvasBorderRadius || 30;
+                        document.getElementById('canvasBorderRadius').value = canvasBorderRadius;
+                        document.getElementById('canvasBorderRadiusValue').value = canvasBorderRadius;
+                        
+                        // Background settings
+                        document.getElementById('bgShapeType').value = config.settings.bgShapeType || 'circles';
+                        document.getElementById('showDigitalCode').checked = config.settings.showDigitalCode !== false;
+                        document.getElementById('digitalCodeText').value = config.settings.digitalCodeText || '01';
+                        document.getElementById('showMusicNotes').checked = config.settings.showMusicNotes !== false;
+                        document.getElementById('musicNoteSymbol').value = config.settings.musicNoteSymbol || '♪';
+                        document.getElementById('showBackgroundLines').checked = config.settings.showBackgroundLines !== false;
+                        bgOpacity = config.settings.bgOpacity || 100;
+                        document.getElementById('bgOpacity').value = bgOpacity;
+                        document.getElementById('bgOpacityValue').value = bgOpacity;
+                        bgBlur = config.settings.bgBlur || 0;
+                        document.getElementById('bgBlur').value = bgBlur;
+                        document.getElementById('bgBlurValue').value = bgBlur;
+                        document.getElementById('showBoxMarkers').checked = config.settings.showBoxMarkers !== false;
+                        
+                        // Text blending
+                        textStrokeWidth = config.settings.textStrokeWidth || 12;
+                        document.getElementById('textStrokeWidth').value = textStrokeWidth;
+                        document.getElementById('textStrokeWidthValue').value = textStrokeWidth;
+                        shadowBlur = config.settings.shadowBlur || 15;
+                        document.getElementById('shadowBlur').value = shadowBlur;
+                        document.getElementById('shadowBlurValue').value = shadowBlur;
+                        shadowOffsetX = config.settings.shadowOffsetX || 5;
+                        document.getElementById('shadowOffsetX').value = shadowOffsetX;
+                        document.getElementById('shadowOffsetXValue').value = shadowOffsetX;
+                        shadowOffsetY = config.settings.shadowOffsetY || 5;
+                        document.getElementById('shadowOffsetY').value = shadowOffsetY;
+                        document.getElementById('shadowOffsetYValue').value = shadowOffsetY;
+                        outerGlowIntensity = config.settings.outerGlowIntensity || 20;
+                        document.getElementById('outerGlowIntensity').value = outerGlowIntensity;
+                        document.getElementById('outerGlowIntensityValue').value = outerGlowIntensity;
+                        bevelDepth = config.settings.bevelDepth || 3;
+                        document.getElementById('bevelDepth').value = bevelDepth;
+                        document.getElementById('bevelDepthValue').value = bevelDepth;
+                        document.getElementById('enableDropShadow').checked = config.settings.enableDropShadow !== false;
+                        document.getElementById('enableOuterGlow').checked = config.settings.enableOuterGlow || false;
+                        document.getElementById('enableBevel').checked = config.settings.enableBevel || false;
                     }
                     
-                    // Apply boxes
+                    // Boxes
                     if (config.boxes) {
                         boxes = config.boxes.map(b => ({
                             ...b,
-                            image: null
+                            image: null,
+                            imageRotation: b.imageRotation || 0
                         }));
                         nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
                         generateBoxControls();
                     }
                     
-                    // Apply cutout settings
+                    // Cutout
                     if (config.cutout) {
                         cutoutOpacity = config.cutout.opacity || 100;
                         cutoutZoom = config.cutout.zoom || 100;
                         cutoutOffsetX = config.cutout.offsetX || 0;
                         cutoutOffsetY = config.cutout.offsetY || 0;
+                        cutoutPosX = config.cutout.posX || 380;
+                        cutoutPosY = config.cutout.posY || 600;
                         
                         document.getElementById('opacity-cutout').value = cutoutOpacity;
                         document.getElementById('opacity-cutoutValue').value = cutoutOpacity;
@@ -2233,12 +2542,16 @@
                         document.getElementById('offsetX-cutoutValue').value = cutoutOffsetX;
                         document.getElementById('offsetY-cutout').value = cutoutOffsetY;
                         document.getElementById('offsetY-cutoutValue').value = cutoutOffsetY;
+                        document.getElementById('cutoutPosX').value = cutoutPosX;
+                        document.getElementById('cutoutPosXValue').value = cutoutPosX;
+                        document.getElementById('cutoutPosY').value = cutoutPosY;
+                        document.getElementById('cutoutPosYValue').value = cutoutPosY;
                     }
                     
-                    alert('Configuration loaded successfully! (Note: Images are not included and need to be re-uploaded)');
+                    alert('Configuration loaded successfully! (Note: Images need to be re-uploaded)');
                     redraw();
                 } catch (err) {
-                    alert('Error loading configuration file: ' + err.message);
+                    alert('Error loading configuration: ' + err.message);
                 }
             };
             reader.readAsText(file);
@@ -2247,7 +2560,6 @@
         // Presets
         function applyPreset(preset) {
             if (preset === 'miku') {
-                // Classic Miku layout
                 primaryColor = '#39C5BB';
                 accentColor = '#FF6B9D';
                 bannerColor = '#39C5BB';
@@ -2256,41 +2568,37 @@
                 syncColor('bannerColor', bannerColor);
                 
                 boxes = [
-                    { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                    { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'minimal') {
-                // Minimal layout - single centered box
                 boxes = [
-                    { id: 1, type: 'large', x: 1200, y: 500, size: 400, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                    { id: 1, type: 'large', x: 1200, y: 500, size: 400, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'grid') {
-                // Grid layout - 2x2
                 boxes = [
-                    { id: 1, type: 'large', x: 800, y: 400, size: 250, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1200, y: 400, size: 250, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 800, y: 750, size: 250, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 4, type: 'large', x: 1200, y: 750, size: 250, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                    { id: 1, type: 'large', x: 800, y: 400, size: 250, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1200, y: 400, size: 250, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 800, y: 750, size: 250, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 4, type: 'large', x: 1200, y: 750, size: 250, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'diagonal') {
-                // Diagonal layout
                 boxes = [
-                    { id: 1, type: 'large', x: 700, y: 350, size: 280, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 1100, y: 550, size: 280, rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1500, y: 750, size: 280, rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                    { id: 1, type: 'large', x: 700, y: 350, size: 280, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1100, y: 550, size: 280, rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1500, y: 750, size: 280, rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'centered') {
-                // Centered circular layout
                 boxes = [
-                    { id: 1, type: 'large', x: 1050, y: 300, size: 220, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 2, type: 'large', x: 750, y: 600, size: 220, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 3, type: 'large', x: 1350, y: 600, size: 220, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 },
-                    { id: 4, type: 'large', x: 1050, y: 850, size: 220, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0 }
+                    { id: 1, type: 'large', x: 1050, y: 300, size: 220, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 750, y: 600, size: 220, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1350, y: 600, size: 220, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 4, type: 'large', x: 1050, y: 850, size: 220, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
             }
             
@@ -2307,42 +2615,13 @@
         function clearAllImages() {
             if (!confirm('Clear all uploaded images?')) return;
             mikuCutout = null;
+            customBackground = null;
             boxes.forEach(b => b.image = null);
             document.getElementById('preview-cutout').innerHTML = '<span class="box-marker">C</span>';
+            document.getElementById('preview-background').innerHTML = '<span class="box-marker">BG</span>';
             generateBoxControls();
             redraw();
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
