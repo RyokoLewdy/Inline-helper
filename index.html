@@ -1712,7 +1712,17 @@
                 drawCutout(targetCtx, mikuCutout, cutoutPosX, cutoutPosY, 900, cutoutOpacity / 100, cutoutZoom / 100, cutoutOffsetX, cutoutOffsetY);
             }
             
-            // Banner
+            // Boxes (drawn before banner so banner appears on top)
+            showBoxBorders = document.getElementById('showBoxBorders').checked;
+            boxes.forEach(box => {
+                if (box.image) {
+                    drawImageInBox(targetCtx, box);
+                } else {
+                    drawEmptyBox(targetCtx, box);
+                }
+            });
+            
+            // Banner (drawn after boxes so it appears on top)
             if (document.getElementById('showBanner').checked) {
                 const bannerX = parseInt(document.getElementById('bannerX').value);
                 const bannerY = parseInt(document.getElementById('bannerY').value);
@@ -1725,16 +1735,6 @@
                 
                 drawBanner(targetCtx, bannerX, bannerY, bannerWidth, bannerHeight, bannerRotation, mainText, subtitleText, bannerShape);
             }
-            
-            // Boxes
-            showBoxBorders = document.getElementById('showBoxBorders').checked;
-            boxes.forEach(box => {
-                if (box.image) {
-                    drawImageInBox(targetCtx, box);
-                } else {
-                    drawEmptyBox(targetCtx, box);
-                }
-            });
             
             // Canvas Border Frame (drawn last so it's on top of everything)
             if (document.getElementById('showCanvasBorder').checked) {
