@@ -1152,7 +1152,7 @@
     
     <!-- Mini Canvas Preview -->
     <div class="canvas-container">
-        <canvas id="canvas" width="400" height="225"></canvas>
+        <canvas id="canvas" width="400" height="229"></canvas>
         <div class="canvas-controls">
             <button onclick="openPreview()">👁️ Preview</button>
             <button onclick="downloadImage()">💾 Download</button>
@@ -2266,29 +2266,26 @@
             const borderWidth = canvasBorderWidth;
             const radius = canvasBorderRadius;
             
-            // Account for safe zone offset so border exports correctly
-            const offsetX = SAFE_ZONE.x; // 90
-            const offsetY = SAFE_ZONE.y; // 60
+            // Draw border within the safe zone area (90, 60, 1920, 1080)
+            // Inset by half the border width so the stroke is centered
+            const x = 90 + borderWidth / 2;
+            const y = 60 + borderWidth / 2;
+            const w = 1920 - borderWidth;
+            const h = 1080 - borderWidth;
             
-            // Draw rounded rectangle border around entire canvas
             ctx.strokeStyle = canvasBorderColor;
             ctx.lineWidth = borderWidth;
             ctx.shadowColor = canvasBorderColor;
             ctx.shadowBlur = 20;
             
-            const x = offsetX + borderWidth / 2;
-            const y = offsetY + borderWidth / 2;
-            const width = 1920 - borderWidth;
-            const height = 1080 - borderWidth;
-            
             ctx.beginPath();
             ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.arcTo(x + width, y, x + width, y + radius, radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
-            ctx.lineTo(x + radius, y + height);
-            ctx.arcTo(x, y + height, x, y + height - radius, radius);
+            ctx.lineTo(x + w - radius, y);
+            ctx.arcTo(x + w, y, x + w, y + radius, radius);
+            ctx.lineTo(x + w, y + h - radius);
+            ctx.arcTo(x + w, y + h, x + w - radius, y + h, radius);
+            ctx.lineTo(x + radius, y + h);
+            ctx.arcTo(x, y + h, x, y + h - radius, radius);
             ctx.lineTo(x, y + radius);
             ctx.arcTo(x, y, x + radius, y, radius);
             ctx.closePath();
@@ -2299,7 +2296,7 @@
         }
         
         function redraw() {
-            drawToContext(ctx, canvas, canvas.width / 1920);
+            drawToContext(ctx, canvas, canvas.width / 2100);
         }
         
         function openPreview() {
