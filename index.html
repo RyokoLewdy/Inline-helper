@@ -2266,14 +2266,18 @@
             const borderWidth = canvasBorderWidth;
             const radius = canvasBorderRadius;
             
+            // Account for safe zone offset so border exports correctly
+            const offsetX = SAFE_ZONE.x; // 90
+            const offsetY = SAFE_ZONE.y; // 60
+            
             // Draw rounded rectangle border around entire canvas
             ctx.strokeStyle = canvasBorderColor;
             ctx.lineWidth = borderWidth;
             ctx.shadowColor = canvasBorderColor;
             ctx.shadowBlur = 20;
             
-            const x = borderWidth / 2;
-            const y = borderWidth / 2;
+            const x = offsetX + borderWidth / 2;
+            const y = offsetY + borderWidth / 2;
             const width = 1920 - borderWidth;
             const height = 1080 - borderWidth;
             
