@@ -314,6 +314,55 @@
             border: 2px solid var(--primary-teal);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        .canvas-container.minimized {
+            padding: 10px;
+        }
+        
+        .canvas-container.minimized #canvas {
+            display: none;
+        }
+        
+        .canvas-container.minimized .canvas-controls {
+            margin-top: 0;
+        }
+        
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .canvas-header h4 {
+            margin: 0;
+            color: var(--cyan);
+            font-size: 14px;
+        }
+        
+        .minimize-btn {
+            background: var(--dark-gray);
+            border: 2px solid var(--pink);
+            color: var(--pink);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.3s;
+        }
+        
+        .minimize-btn:hover {
+            background: var(--pink);
+            color: white;
+            transform: none;
+            box-shadow: none;
         }
         
         #canvas {
@@ -1008,6 +1057,7 @@
                                 <span class="box-marker">BG</span>
                             </div>
                             <button class="secondary" onclick="document.getElementById('backgroundUpload').click()">📤 Upload Background</button>
+                            <button class="danger" onclick="removeBackgroundImage()" style="margin-top: 10px;">🗑️ Remove Image</button>
                             <input type="file" id="backgroundUpload" accept="image/*" onchange="handleBackgroundUpload(event)">
                         </div>
                         
@@ -1043,6 +1093,7 @@
                                 <span class="box-marker" id="marker-cutout">C</span>
                             </div>
                             <button class="secondary" onclick="document.getElementById('cutout').click()">📤 Upload Image</button>
+                            <button class="danger" onclick="removeCutoutImage()" style="margin-top: 10px;">🗑️ Remove Image</button>
                             <input type="file" id="cutout" accept="image/*" onchange="handleImageUpload(event, 'cutout', 0)">
                         </div>
                         
@@ -1151,7 +1202,11 @@
     </div>
     
     <!-- Mini Canvas Preview -->
-    <div class="canvas-container">
+    <div class="canvas-container" id="canvasContainer">
+        <div class="canvas-header">
+            <h4>Live Preview</h4>
+            <button class="minimize-btn" onclick="togglePreviewMinimize()" title="Minimize Preview">−</button>
+        </div>
         <canvas id="canvas" width="400" height="229"></canvas>
         <div class="canvas-controls">
             <button onclick="openPreview()">👁️ Preview</button>
@@ -1170,16 +1225,24 @@
     <div class="preview-modal" id="previewModal">
         <div class="preview-content">
             <button class="preview-close" onclick="closePreview()">✕</button>
-            <canvas class="preview-canvas" id="previewCanvas" width="2100" height="1200"></canvas>
+            <canvas class="preview-canvas" id="previewDisplayCanvas" width="1920" height="1080"></canvas>
         </div>
     </div>
+    
+    <canvas id="previewCanvas" width="2100" height="1200" style="display: none;"></canvas>
     
     <script>
         // Global variables
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCanvas = document.getElementById('previewCanvas'); // Hidden 2100x1200 working canvas
         const previewCtx = previewCanvas.getContext('2d');
+        
+        // Canvas setup:
+        // - Mini preview (canvas): 400x229 scaled version of full 2100x1200 canvas
+        // - Working canvas (previewCanvas): Hidden 2100x1200 for full quality rendering
+        // - Display canvas (previewDisplayCanvas): 1920x1080 shows cropped safe zone in modal
+        // - Export: Crops safe zone (90, 60, 1920, 1080) from working canvas
         
         const SAFE_ZONE = {
             x: 90,
@@ -1226,9 +1289,9 @@
         let bgBlur = 0;
         
         let boxes = [
-            { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-            { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-            { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+            { id: 1, type: 'large', x: 920, y: 450, width: 330, height: 330, shape: 'diamond', rotation: 45, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+            { id: 2, type: 'large', x: 1250, y: 600, width: 300, height: 300, shape: 'diamond', rotation: 15, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+            { id: 3, type: 'large', x: 1530, y: 400, width: 280, height: 280, shape: 'diamond', rotation: -20, image: null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
         ];
         
         let nextBoxId = 4;
@@ -1330,10 +1393,14 @@
                     const box = boxes.find(b => b.id === boxId);
                     if (box) box.offsetY = parseInt(value);
                 }
-            } else if (id.includes('size-')) {
+            } else if (id.includes('width-')) {
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
-                if (box) box.size = parseInt(value);
+                if (box) box.width = parseInt(value);
+            } else if (id.includes('height-')) {
+                const boxId = parseInt(id.split('-')[1]);
+                const box = boxes.find(b => b.id === boxId);
+                if (box) box.height = parseInt(value);
             } else if (id.includes('rotation-')) {
                 const boxId = parseInt(id.split('-')[1]);
                 const box = boxes.find(b => b.id === boxId);
@@ -1385,6 +1452,15 @@
         
         function syncNumber(id, value) {
             syncSlider(id, value);
+        }
+        
+        // Box shape sync
+        function syncBoxShape(boxId, shape) {
+            const box = boxes.find(b => b.id === boxId);
+            if (box) {
+                box.shape = shape;
+                redraw();
+            }
         }
         
         // Color sync
@@ -1441,6 +1517,7 @@
                                 <span class="box-marker" id="marker-${box.id}">${box.id}</span>
                             </div>
                             <button class="secondary" onclick="document.getElementById('upload-${box.id}').click()">📤 Upload Image</button>
+                            <button class="danger" onclick="removeBoxImage(${box.id})" style="margin-top: 10px;">🗑️ Remove Image</button>
                             <input type="file" id="upload-${box.id}" accept="image/*" onchange="handleBoxImageUpload(event, ${box.id})">
                         </div>
                         
@@ -1462,10 +1539,31 @@
                             </div>
                             
                             <div class="control-group">
-                                <label class="control-label">Box Size</label>
+                                <label class="control-label">Box Shape</label>
+                                <select id="shape-${box.id}" onchange="syncBoxShape(${box.id}, this.value)">
+                                    <option value="diamond" ${(box.shape || 'diamond') === 'diamond' ? 'selected' : ''}>Diamond</option>
+                                    <option value="rectangle" ${box.shape === 'rectangle' ? 'selected' : ''}>Rectangle</option>
+                                    <option value="hexagon" ${box.shape === 'hexagon' ? 'selected' : ''}>Hexagon</option>
+                                    <option value="circle" ${box.shape === 'circle' ? 'selected' : ''}>Circle</option>
+                                    <option value="triangle" ${box.shape === 'triangle' ? 'selected' : ''}>Triangle</option>
+                                    <option value="octagon" ${box.shape === 'octagon' ? 'selected' : ''}>Octagon</option>
+                                    <option value="star" ${box.shape === 'star' ? 'selected' : ''}>Star</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Box Width</label>
                                 <div class="control-row">
-                                    <input type="range" id="size-${box.id}" min="100" max="500" value="${box.size}" oninput="syncSlider('size-${box.id}', this.value)">
-                                    <input type="number" class="range-value" id="size-${box.id}Value" min="100" max="500" value="${box.size}" oninput="syncNumber('size-${box.id}', this.value)">
+                                    <input type="range" id="width-${box.id}" min="100" max="500" value="${box.width || box.size || 250}" oninput="syncSlider('width-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="width-${box.id}Value" min="100" max="500" value="${box.width || box.size || 250}" oninput="syncNumber('width-${box.id}', this.value)">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Box Height</label>
+                                <div class="control-row">
+                                    <input type="range" id="height-${box.id}" min="100" max="500" value="${box.height || box.size || 250}" oninput="syncSlider('height-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="height-${box.id}Value" min="100" max="500" value="${box.height || box.size || 250}" oninput="syncNumber('height-${box.id}', this.value)">
                                 </div>
                             </div>
                             
@@ -1538,7 +1636,9 @@
                 type: 'custom',
                 x: 1000,
                 y: 500,
-                size: 250,
+                width: 250,
+                height: 250,
+                shape: 'diamond',
                 rotation: 0,
                 image: null,
                 opacity: 100,
@@ -1637,6 +1737,31 @@
             reader.readAsDataURL(file);
         }
         
+        // Remove image functions
+        function removeCutoutImage() {
+            mikuCutout = null;
+            document.getElementById('cutout').value = '';
+            document.getElementById('preview-cutout').innerHTML = '<span class="box-marker" id="marker-cutout">C</span>';
+            redraw();
+        }
+        
+        function removeBoxImage(boxId) {
+            const box = boxes.find(b => b.id === boxId);
+            if (box) {
+                box.image = null;
+                document.getElementById(`upload-${boxId}`).value = '';
+                document.getElementById(`preview-${boxId}`).innerHTML = `<span class="box-marker" id="marker-${boxId}">${boxId}</span>`;
+                redraw();
+            }
+        }
+        
+        function removeBackgroundImage() {
+            customBackground = null;
+            document.getElementById('backgroundUpload').value = '';
+            document.getElementById('preview-background').innerHTML = '<span class="box-marker">BG</span>';
+            redraw();
+        }
+        
         // Drawing functions
         function drawToContext(targetCtx, targetCanvas, scale = 1) {
             targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
@@ -1670,7 +1795,7 @@
             const bgShapeType = document.getElementById('bgShapeType').value;
             if (bgShapeType === 'circles') {
                 drawGradientSplash(targetCtx, 600, 500, 450, primaryColor, 0.5);
-                drawGradientSplash(targetCtx, 1000, 650, 400, '#00D1D6', 0.4);
+                drawGradientSplash(targetCtx, 1000, 650, 400, primaryColor, 0.4);
                 drawGradientSplash(targetCtx, 1400, 400, 350, accentColor, 0.3);
                 drawGradientSplash(targetCtx, 800, 850, 380, primaryColor, 0.35);
             } else if (bgShapeType === 'hexagons') {
@@ -1896,12 +2021,55 @@
             ctx.translate(box.x, box.y);
             ctx.rotate(box.rotation * Math.PI / 180);
             
-            // Clipping
+            const w = box.width || box.size || 250;
+            const h = box.height || box.size || 250;
+            const shape = box.shape || 'diamond';
+            
+            // Create clipping path based on shape
             ctx.beginPath();
-            ctx.moveTo(0, -box.size);
-            ctx.lineTo(box.size, 0);
-            ctx.lineTo(0, box.size);
-            ctx.lineTo(-box.size, 0);
+            if (shape === 'rectangle') {
+                ctx.rect(-w/2, -h/2, w, h);
+            } else if (shape === 'diamond') {
+                ctx.moveTo(0, -h);
+                ctx.lineTo(w, 0);
+                ctx.lineTo(0, h);
+                ctx.lineTo(-w, 0);
+            } else if (shape === 'circle') {
+                const radius = Math.min(w, h);
+                ctx.ellipse(0, 0, radius, radius, 0, 0, Math.PI * 2);
+            } else if (shape === 'hexagon') {
+                for (let i = 0; i < 6; i++) {
+                    const angle = (Math.PI / 3) * i - Math.PI / 2;
+                    const x = Math.cos(angle) * w;
+                    const y = Math.sin(angle) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            } else if (shape === 'triangle') {
+                ctx.moveTo(0, -h);
+                ctx.lineTo(w, h);
+                ctx.lineTo(-w, h);
+            } else if (shape === 'octagon') {
+                for (let i = 0; i < 8; i++) {
+                    const angle = (Math.PI / 4) * i - Math.PI / 2;
+                    const x = Math.cos(angle) * w;
+                    const y = Math.sin(angle) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            } else if (shape === 'star') {
+                const spikes = 5;
+                const outerRadius = Math.max(w, h);
+                const innerRadius = outerRadius * 0.5;
+                for (let i = 0; i < spikes * 2; i++) {
+                    const angle = (Math.PI / spikes) * i - Math.PI / 2;
+                    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            }
             ctx.closePath();
             ctx.clip();
             
@@ -1909,7 +2077,7 @@
             ctx.rotate((box.imageRotation || 0) * Math.PI / 180);
             
             const zoom = box.zoom / 100;
-            const scale = Math.max(box.size * 2 / box.image.width, box.size * 2 / box.image.height) * zoom;
+            const scale = Math.max(w * 2 / box.image.width, h * 2 / box.image.height) * zoom;
             const scaledWidth = box.image.width * scale;
             const scaledHeight = box.image.height * scale;
             
@@ -1921,12 +2089,53 @@
                 ctx.save();
                 ctx.translate(box.x, box.y);
                 ctx.rotate(box.rotation * Math.PI / 180);
+                
                 ctx.beginPath();
-                ctx.moveTo(0, -box.size);
-                ctx.lineTo(box.size, 0);
-                ctx.lineTo(0, box.size);
-                ctx.lineTo(-box.size, 0);
+                if (shape === 'rectangle') {
+                    ctx.rect(-w/2, -h/2, w, h);
+                } else if (shape === 'diamond') {
+                    ctx.moveTo(0, -h);
+                    ctx.lineTo(w, 0);
+                    ctx.lineTo(0, h);
+                    ctx.lineTo(-w, 0);
+                } else if (shape === 'circle') {
+                    const radius = Math.min(w, h);
+                    ctx.ellipse(0, 0, radius, radius, 0, 0, Math.PI * 2);
+                } else if (shape === 'hexagon') {
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (Math.PI / 3) * i - Math.PI / 2;
+                        const x = Math.cos(angle) * w;
+                        const y = Math.sin(angle) * h;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                } else if (shape === 'triangle') {
+                    ctx.moveTo(0, -h);
+                    ctx.lineTo(w, h);
+                    ctx.lineTo(-w, h);
+                } else if (shape === 'octagon') {
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (Math.PI / 4) * i - Math.PI / 2;
+                        const x = Math.cos(angle) * w;
+                        const y = Math.sin(angle) * h;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                } else if (shape === 'star') {
+                    const spikes = 5;
+                    const outerRadius = Math.max(w, h);
+                    const innerRadius = outerRadius * 0.5;
+                    for (let i = 0; i < spikes * 2; i++) {
+                        const angle = (Math.PI / spikes) * i - Math.PI / 2;
+                        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                        const x = Math.cos(angle) * radius;
+                        const y = Math.sin(angle) * radius;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                }
                 ctx.closePath();
+                
                 ctx.strokeStyle = boxBorderColor;
                 ctx.lineWidth = boxBorderWidth;
                 ctx.stroke();
@@ -1938,11 +2147,55 @@
             ctx.save();
             ctx.translate(box.x, box.y);
             ctx.rotate(box.rotation * Math.PI / 180);
+            
+            const w = box.width || box.size || 250;
+            const h = box.height || box.size || 250;
+            const shape = box.shape || 'diamond';
+            
             ctx.beginPath();
-            ctx.moveTo(0, -box.size);
-            ctx.lineTo(box.size, 0);
-            ctx.lineTo(0, box.size);
-            ctx.lineTo(-box.size, 0);
+            if (shape === 'rectangle') {
+                ctx.rect(-w/2, -h/2, w, h);
+            } else if (shape === 'diamond') {
+                ctx.moveTo(0, -h);
+                ctx.lineTo(w, 0);
+                ctx.lineTo(0, h);
+                ctx.lineTo(-w, 0);
+            } else if (shape === 'circle') {
+                const radius = Math.min(w, h);
+                ctx.ellipse(0, 0, radius, radius, 0, 0, Math.PI * 2);
+            } else if (shape === 'hexagon') {
+                for (let i = 0; i < 6; i++) {
+                    const angle = (Math.PI / 3) * i - Math.PI / 2;
+                    const x = Math.cos(angle) * w;
+                    const y = Math.sin(angle) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            } else if (shape === 'triangle') {
+                ctx.moveTo(0, -h);
+                ctx.lineTo(w, h);
+                ctx.lineTo(-w, h);
+            } else if (shape === 'octagon') {
+                for (let i = 0; i < 8; i++) {
+                    const angle = (Math.PI / 4) * i - Math.PI / 2;
+                    const x = Math.cos(angle) * w;
+                    const y = Math.sin(angle) * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            } else if (shape === 'star') {
+                const spikes = 5;
+                const outerRadius = Math.max(w, h);
+                const innerRadius = outerRadius * 0.5;
+                for (let i = 0; i < spikes * 2; i++) {
+                    const angle = (Math.PI / spikes) * i - Math.PI / 2;
+                    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+            }
             ctx.closePath();
             
             if (showBoxBorders) {
@@ -2300,7 +2553,16 @@
         }
         
         function openPreview() {
+            // Draw to full 2100x1200 canvas
             drawToContext(previewCtx, previewCanvas, 1);
+            
+            // Get the display canvas and crop the safe zone area
+            const displayCanvas = document.getElementById('previewDisplayCanvas');
+            const displayCtx = displayCanvas.getContext('2d');
+            
+            // Copy the cropped 1920x1080 area from the safe zone
+            displayCtx.drawImage(previewCanvas, 90, 60, 1920, 1080, 0, 0, 1920, 1080);
+            
             document.getElementById('previewModal').classList.add('active');
         }
         
@@ -2308,25 +2570,39 @@
             document.getElementById('previewModal').classList.remove('active');
         }
         
+        function togglePreviewMinimize() {
+            const container = document.getElementById('canvasContainer');
+            const btn = document.querySelector('.minimize-btn');
+            container.classList.toggle('minimized');
+            btn.textContent = container.classList.contains('minimized') ? '+' : '−';
+        }
+        
         function downloadImage() {
-            const exportCanvas = document.createElement('canvas');
-            exportCanvas.width = 1920;
-            exportCanvas.height = 1080;
-            const exportCtx = exportCanvas.getContext('2d');
-            
+            // Temporarily disable temp background
             const tempBgWasChecked = document.getElementById('showTempBg').checked;
             if (tempBgWasChecked) {
                 document.getElementById('showTempBg').checked = false;
             }
             
+            // Draw to full 2100x1200 canvas
             drawToContext(previewCtx, previewCanvas, 1);
+            
+            // Create export canvas and crop the safe zone area
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = 1920;
+            exportCanvas.height = 1080;
+            const exportCtx = exportCanvas.getContext('2d');
+            
+            // Copy the cropped 1920x1080 area from the safe zone
             exportCtx.drawImage(previewCanvas, 90, 60, 1920, 1080, 0, 0, 1920, 1080);
             
+            // Restore temp background setting
             if (tempBgWasChecked) {
                 document.getElementById('showTempBg').checked = true;
                 redraw();
             }
             
+            // Download
             const link = document.createElement('a');
             const mainText = document.getElementById('mainText').value.toLowerCase().replace(/\s+/g, '-');
             link.download = `${mainText}-profile-1920x1080.png`;
@@ -2389,7 +2665,9 @@
                     type: b.type,
                     x: b.x,
                     y: b.y,
-                    size: b.size,
+                    width: b.width || b.size || 250,
+                    height: b.height || b.size || 250,
+                    shape: b.shape || 'diamond',
                     rotation: b.rotation,
                     opacity: b.opacity,
                     zoom: b.zoom,
@@ -2520,7 +2798,10 @@
                         boxes = config.boxes.map(b => ({
                             ...b,
                             image: null,
-                            imageRotation: b.imageRotation || 0
+                            imageRotation: b.imageRotation || 0,
+                            width: b.width || b.size || 250,
+                            height: b.height || b.size || 250,
+                            shape: b.shape || 'diamond'
                         }));
                         nextBoxId = Math.max(...boxes.map(b => b.id)) + 1;
                         generateBoxControls();
@@ -2569,37 +2850,37 @@
                 syncColor('bannerColor', bannerColor);
                 
                 boxes = [
-                    { id: 1, type: 'large', x: 920, y: 450, size: 330, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 2, type: 'large', x: 1250, y: 600, size: 300, rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 3, type: 'large', x: 1530, y: 400, size: 280, rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+                    { id: 1, type: 'large', x: 920, y: 450, width: 330, height: 330, shape: 'diamond', rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1250, y: 600, width: 300, height: 300, shape: 'diamond', rotation: 15, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1530, y: 400, width: 280, height: 280, shape: 'diamond', rotation: -20, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'minimal') {
                 boxes = [
-                    { id: 1, type: 'large', x: 1200, y: 500, size: 400, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+                    { id: 1, type: 'large', x: 1200, y: 500, width: 400, height: 400, shape: 'hexagon', rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'grid') {
                 boxes = [
-                    { id: 1, type: 'large', x: 800, y: 400, size: 250, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 2, type: 'large', x: 1200, y: 400, size: 250, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 3, type: 'large', x: 800, y: 750, size: 250, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 4, type: 'large', x: 1200, y: 750, size: 250, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+                    { id: 1, type: 'large', x: 800, y: 400, width: 250, height: 250, shape: 'rectangle', rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1200, y: 400, width: 250, height: 250, shape: 'rectangle', rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 800, y: 750, width: 250, height: 250, shape: 'rectangle', rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 4, type: 'large', x: 1200, y: 750, width: 250, height: 250, shape: 'rectangle', rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'diagonal') {
                 boxes = [
-                    { id: 1, type: 'large', x: 700, y: 350, size: 280, rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 2, type: 'large', x: 1100, y: 550, size: 280, rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 3, type: 'large', x: 1500, y: 750, size: 280, rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+                    { id: 1, type: 'large', x: 700, y: 350, width: 280, height: 280, shape: 'diamond', rotation: 45, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 1100, y: 550, width: 280, height: 280, shape: 'diamond', rotation: 45, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1500, y: 750, width: 280, height: 280, shape: 'diamond', rotation: 45, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
                 
             } else if (preset === 'centered') {
                 boxes = [
-                    { id: 1, type: 'large', x: 1050, y: 300, size: 220, rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 2, type: 'large', x: 750, y: 600, size: 220, rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 3, type: 'large', x: 1350, y: 600, size: 220, rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
-                    { id: 4, type: 'large', x: 1050, y: 850, size: 220, rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
+                    { id: 1, type: 'large', x: 1050, y: 300, width: 220, height: 220, shape: 'triangle', rotation: 0, image: boxes[0]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 2, type: 'large', x: 750, y: 600, width: 220, height: 220, shape: 'circle', rotation: 0, image: boxes[1]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 3, type: 'large', x: 1350, y: 600, width: 220, height: 220, shape: 'circle', rotation: 0, image: boxes[2]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 },
+                    { id: 4, type: 'large', x: 1050, y: 850, width: 220, height: 220, shape: 'star', rotation: 0, image: boxes[3]?.image || null, opacity: 100, zoom: 100, offsetX: 0, offsetY: 0, imageRotation: 0 }
                 ];
             }
             
