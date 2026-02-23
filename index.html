@@ -1554,7 +1554,7 @@
                             <div class="control-group">
                                 <label class="control-label">Box Width</label>
                                 <div class="control-row">
-                                    <input type="range" id="width-${box.id}" min="100" max="500" value="${box.width || box.size || 250}" oninput="syncSlider('width-${box.id}', this.value)">
+                                    <input type="range" id="width-${box.id}" min="100" max="1000" value="${box.width || box.size || 250}" oninput="syncSlider('width-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="width-${box.id}Value" min="100" max="1000" value="${box.width || box.size || 250}" oninput="syncNumber('width-${box.id}', this.value)">
                                 </div>
                             </div>
@@ -1562,7 +1562,7 @@
                             <div class="control-group">
                                 <label class="control-label">Box Height</label>
                                 <div class="control-row">
-                                    <input type="range" id="height-${box.id}" min="100" max="500" value="${box.height || box.size || 250}" oninput="syncSlider('height-${box.id}', this.value)">
+                                    <input type="range" id="height-${box.id}" min="100" max="1000" value="${box.height || box.size || 250}" oninput="syncSlider('height-${box.id}', this.value)">
                                     <input type="number" class="range-value" id="height-${box.id}Value" min="100" max="1000" value="${box.height || box.size || 250}" oninput="syncNumber('height-${box.id}', this.value)">
                                 </div>
                             </div>
@@ -1764,7 +1764,11 @@
         
         // Drawing functions
         function drawToContext(targetCtx, targetCanvas, scale = 1) {
+            // Clear the entire canvas first before any transformations
+            targetCtx.save();
+            targetCtx.setTransform(1, 0, 0, 1, 0, 0); // Reset to identity matrix
             targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+            targetCtx.restore();
             
             // Temp background 
             const showTempBg = document.getElementById('showTempBg');
@@ -2018,6 +2022,7 @@
         function drawImageInBox(ctx, box) {
             ctx.save();
             ctx.globalAlpha = box.opacity / 100;
+            ctx.globalCompositeOperation = 'source-over'; // Ensure proper blending
             ctx.translate(box.x, box.y);
             ctx.rotate(box.rotation * Math.PI / 180);
             
@@ -2087,6 +2092,7 @@
             // Border
             if (showBoxBorders) {
                 ctx.save();
+                ctx.globalCompositeOperation = 'source-over';
                 ctx.translate(box.x, box.y);
                 ctx.rotate(box.rotation * Math.PI / 180);
                 
@@ -2145,6 +2151,7 @@
         
         function drawEmptyBox(ctx, box) {
             ctx.save();
+            ctx.globalCompositeOperation = 'source-over';
             ctx.translate(box.x, box.y);
             ctx.rotate(box.rotation * Math.PI / 180);
             
@@ -2553,12 +2560,21 @@
         }
         
         function openPreview() {
-            // Draw to full 2100x1200 canvas
+            // Clear and draw to full 2100x1200 canvas
+            const tempCtx = previewCanvas.getContext('2d');
+            tempCtx.save();
+            tempCtx.setTransform(1, 0, 0, 1, 0, 0);
+            tempCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            tempCtx.restore();
+            
             drawToContext(previewCtx, previewCanvas, 1);
             
             // Get the display canvas and crop the safe zone area
             const displayCanvas = document.getElementById('previewDisplayCanvas');
             const displayCtx = displayCanvas.getContext('2d');
+            
+            // Clear display canvas
+            displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
             
             // Copy the cropped 1920x1080 area from the safe zone
             displayCtx.drawImage(previewCanvas, 90, 60, 1920, 1080, 0, 0, 1920, 1080);
@@ -2584,7 +2600,13 @@
                 document.getElementById('showTempBg').checked = false;
             }
             
-            // Draw to full 2100x1200 canvas
+            // Clear and draw to full 2100x1200 canvas
+            const tempCtx = previewCanvas.getContext('2d');
+            tempCtx.save();
+            tempCtx.setTransform(1, 0, 0, 1, 0, 0);
+            tempCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            tempCtx.restore();
+            
             drawToContext(previewCtx, previewCanvas, 1);
             
             // Create export canvas and crop the safe zone area
@@ -2907,4 +2929,3 @@
     </script>
 </body>
 </html>
-
