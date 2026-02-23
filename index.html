@@ -1555,7 +1555,7 @@
                                 <label class="control-label">Box Width</label>
                                 <div class="control-row">
                                     <input type="range" id="width-${box.id}" min="100" max="500" value="${box.width || box.size || 250}" oninput="syncSlider('width-${box.id}', this.value)">
-                                    <input type="number" class="range-value" id="width-${box.id}Value" min="100" max="500" value="${box.width || box.size || 250}" oninput="syncNumber('width-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="width-${box.id}Value" min="100" max="1000" value="${box.width || box.size || 250}" oninput="syncNumber('width-${box.id}', this.value)">
                                 </div>
                             </div>
                             
@@ -1563,7 +1563,7 @@
                                 <label class="control-label">Box Height</label>
                                 <div class="control-row">
                                     <input type="range" id="height-${box.id}" min="100" max="500" value="${box.height || box.size || 250}" oninput="syncSlider('height-${box.id}', this.value)">
-                                    <input type="number" class="range-value" id="height-${box.id}Value" min="100" max="500" value="${box.height || box.size || 250}" oninput="syncNumber('height-${box.id}', this.value)">
+                                    <input type="number" class="range-value" id="height-${box.id}Value" min="100" max="1000" value="${box.height || box.size || 250}" oninput="syncNumber('height-${box.id}', this.value)">
                                 </div>
                             </div>
                             
@@ -2907,3 +2907,4 @@
     </script>
 </body>
 </html>
+
